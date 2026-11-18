@@ -1,4 +1,4 @@
-# Dot Wave Studio
+# Dot Wave Studio 2
 
 A small, playful music studio: **Sound → Beat → Melody → Arrange → Export**.
 
@@ -47,6 +47,6 @@ Recorded instrument samples are credited under CC BY 3.0 in [sample credits](sam
 
 ## Project storage
 
-This private repository contains the program, build tools, migration/test fixtures and example music. Live browser drafts, personal voice banks and working-session exports are kept outside version control. Keep a downloaded Studio project or voice-bank file as a backup of your own work.
+This public repository contains the program, build tools, migration/test fixtures and example music. Live browser drafts, personal voice banks and working-session exports are kept outside version control. Keep a downloaded Studio project or voice-bank file as a backup of your own work.
 
 This repository is the development home for the downloadable edition. The existing itch.io page and its browser/demo release are managed separately.
