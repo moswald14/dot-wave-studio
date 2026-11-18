@@ -39,6 +39,8 @@ See [Wave Shaper controls](Wave-Shaper-guide.md) and the [studio guide](START-HE
 
 The test suite currently contains [64 checks](reports/verification-2.5.1.json). It covers audio/file formats, existing-project migration, voice-controller cancellation, waveform editing, pins, section rendering, solo/export separation, live audio replacement, held-key Undo grouping and keyboard focus restoration. Browser checks are recorded separately; passing automated checks does not verify physical microphone, speaker or touch-device quality.
 
+[Studio checks](https://github.com/moswald14/dot-wave-studio/actions/workflows/studio-checks.yml) runs the suite on each push to `main` and pull request. It also rebuilds the downloadable HTML in a temporary folder and checks that it matches the file in `releases/` byte for byte, with Classic and sample credits preserved. Run `node check-release.cjs` locally for the same build check. The workflow has read-only repository access and does not publish a release.
+
 The source is modular JavaScript/CSS. Audio, UI and validation share the same core models; the browser audio worker uses the same renderer as the tests. See [development notes](DEVELOPMENT.md).
 
 Recorded instrument samples are credited under CC BY 3.0 in [sample credits](sample-credits/README.txt). Original source provenance and license text are included. Other third-party notices are in [Third-party-notices.txt](Third-party-notices.txt).

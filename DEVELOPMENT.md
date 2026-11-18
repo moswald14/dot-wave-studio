@@ -10,6 +10,8 @@ node serve.cjs
 
 The build writes a self-contained HTML file in `dist`. The preview serves that folder at `http://127.0.0.1:17862/`. Both scripts accept an explicit output/serve directory as their first argument. `verify.cjs` accepts an explicit report path.
 
+`node check-release.cjs` builds into a new temporary folder, compares the versioned HTML against `releases/`, checks Classic and sample credits, and removes only its own temporary build. A mismatch fails with an instruction to update the download. `npm run check:release` is an equivalent shortcut. The read-only GitHub workflow runs this check after the existing suite on pushes to `main`, pull requests and manual runs. It uses Node.js 24 and fixed revisions of GitHub's checkout/setup actions, with no package installation or dependency cache.
+
 `core.js` owns validated version 2 project data, Classic migration, library operations, note and clip edits, and rendering adapters. `shaping.js` owns cyclic landmark detection, contour brushes, directed arc selection, and bounded transforms. `app.js` owns the guided interface and history/recovery. `audio.js` owns the worker, output guard, shared playback, previews, cancellation, and live replacement. `studio.css` owns responsive layouts. `build.cjs` embeds the audio worker and every script/style so the result works without a network.
 
 The `dsp` folder reuses the established Dot Wave audio and file-format modules. `classic-harness.cjs` runs the actual Classic page in a test DOM to verify the Classic export interface; browser checks separately verify the real new UI and downloads. Fixtures include older published example music for migration coverage.

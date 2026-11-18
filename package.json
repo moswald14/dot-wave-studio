@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node build.cjs",
     "test": "node verify.cjs",
+    "check:release": "node check-release.cjs",
     "start": "node serve.cjs"
   },
   "engines": {
