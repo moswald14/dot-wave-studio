@@ -1,0 +1,357 @@
+{
+  "commit": "622c2f1c32c8cfce4158ddc3eb26e518ddef37e5",
+  "source": "https://github.com/nbrosowsky/tonejs-instruments",
+  "samples": [
+    {
+      "instrument": "Grand piano",
+      "rootMidi": 36,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/piano/C2.mp3",
+      "sourceSha256": "4fb4d2a432deb5355f62a29b87087f7f1cdd2ca4885016c53d3a65c71b637935",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Grand piano",
+      "rootMidi": 48,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/piano/C3.mp3",
+      "sourceSha256": "277149247cbd666ce256689369e5f501bafdb68d027d866178b7944820f8ebc6",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Grand piano",
+      "rootMidi": 60,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/piano/C4.mp3",
+      "sourceSha256": "a265c8cfd4140cf27b55054b4953b6c691fce3523530ca8ae0faed5e4cd39063",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Grand piano",
+      "rootMidi": 72,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/piano/C5.mp3",
+      "sourceSha256": "54a9304d2c609328580c0e06a394670559fe5f594f643d5d12c6dae158051b4a",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Grand piano",
+      "rootMidi": 84,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/piano/C6.mp3",
+      "sourceSha256": "c3c9ee316e7b98a07d89be2340c2382aa689826b50db9080dab7f6e23ebc3d7c",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Acoustic guitar",
+      "rootMidi": 43,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/guitar-acoustic/G2.mp3",
+      "sourceSha256": "9be6ff1387ec947afedb80244ae9321ca9606ce57c2671c3f50a07f6bdcd4f73",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Acoustic guitar",
+      "rootMidi": 55,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/guitar-acoustic/G3.mp3",
+      "sourceSha256": "8a8ddf06e2d4824f5086e6ad0cf32371da6afc594bf2efd9bb5ec9a2dfe9c040",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Acoustic guitar",
+      "rootMidi": 67,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/guitar-acoustic/G4.mp3",
+      "sourceSha256": "f26371971ba4e34431a709985b3d09ef74be441a6c49612e085f7f8eaf825ef4",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Acoustic guitar",
+      "rootMidi": 74,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/guitar-acoustic/D5.mp3",
+      "sourceSha256": "c9d74d19e672780b7b6e9eb4468b31b5fee6642f20df724198b232f7c78af4f1",
+      "frames": 71050,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Electric bass",
+      "rootMidi": 28,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/bass-electric/E1.mp3",
+      "sourceSha256": "41fd91721398a47c6afa030feb324a1cd981ffac7da9bd313b775ad4f7b1a24c",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Electric bass",
+      "rootMidi": 40,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/bass-electric/E2.mp3",
+      "sourceSha256": "6a3c12185068beb22fc3225e1f2216f1f7440f4ba32a97dc8476c068df8307e8",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Electric bass",
+      "rootMidi": 52,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/bass-electric/E3.mp3",
+      "sourceSha256": "489482662d6fe265fb306f0acbad35ad775c699c7d7ae5485c3b3f583234d4a7",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Electric bass",
+      "rootMidi": 64,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/bass-electric/E4.mp3",
+      "sourceSha256": "59cdf868d2707b91946996e505b7311c6091c22b97aa170f316aa4156280d19d",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Violin",
+      "rootMidi": 57,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/violin/A3.mp3",
+      "sourceSha256": "22573e45ae1dd09043c4456ccb9835a067fee8222e7170b5d3d4c564562b98b1",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Violin",
+      "rootMidi": 69,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/violin/A4.mp3",
+      "sourceSha256": "b51bab05788a078a1ab8480acae9aa96bf2072aafe237991e414759fb0005243",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Violin",
+      "rootMidi": 81,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/violin/A5.mp3",
+      "sourceSha256": "d7649681176736f820a3ff460fbfb1656922b4da0150ec7df4527b01c9bd8ffe",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Violin",
+      "rootMidi": 88,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/violin/E6.mp3",
+      "sourceSha256": "0c86d3d9169a6f026fed1d1716441120ec0bb93a199f37431bb98f6e9f91887e",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Cello",
+      "rootMidi": 36,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/cello/C2.mp3",
+      "sourceSha256": "800cd97bcffd99fc80680d39b73d5143f7ea3188b79244bc3f1bad4845d28fb4",
+      "frames": 85331,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Cello",
+      "rootMidi": 48,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/cello/C3.mp3",
+      "sourceSha256": "bde16914903926f7b7924756e9e28617d9357fe1f7d7085b0d06cedeb527e62a",
+      "frames": 69200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Cello",
+      "rootMidi": 60,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/cello/C4.mp3",
+      "sourceSha256": "e652c5eafaec4fb339da2595daf5554005f39357fac3f6c093b0d0f594b1012b",
+      "frames": 73224,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Cello",
+      "rootMidi": 72,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/cello/C5.mp3",
+      "sourceSha256": "d2f71abde898fc86c86a252fc1a6d7316bc4dd57bb2200eacdbc41cfca38c08e",
+      "frames": 74384,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Flute",
+      "rootMidi": 60,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/flute/C4.mp3",
+      "sourceSha256": "d6837b9e7c524e7b733a11530d930316d85a91cd80dbba38a497047624bb63e3",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Flute",
+      "rootMidi": 72,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/flute/C5.mp3",
+      "sourceSha256": "1b6ec4d5bf2caeca80da4c53f6d9f09eb3a49e8de04588965c55ca8f00ff296d",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Flute",
+      "rootMidi": 84,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/flute/C6.mp3",
+      "sourceSha256": "535d1fbfaddbdb7f91c415708470f0860669c08733823212e81e98909afc9a64",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Flute",
+      "rootMidi": 96,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/flute/C7.mp3",
+      "sourceSha256": "3f19353492d8c293b5e3f6f21c7773355565bb2056a1300b28b33d5e990e8962",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Trumpet",
+      "rootMidi": 53,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/trumpet/F3.mp3",
+      "sourceSha256": "2068cc05c490441bf922c7d7786c4a3035d78ea1e3a9091c31410a2eed3399ca",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Trumpet",
+      "rootMidi": 67,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/trumpet/G4.mp3",
+      "sourceSha256": "ce84c9858174c51a7d1844377a0dd4c3e1523825656851006f953a74f28479f2",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Trumpet",
+      "rootMidi": 77,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/trumpet/F5.mp3",
+      "sourceSha256": "74fb543716686818236f968ee94d467b524d95c0a2fc4d21d38e688c62435168",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Tenor sax",
+      "rootMidi": 50,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/saxophone/D3.mp3",
+      "sourceSha256": "542c925e03078e7b34c84c9f2861230db906611291e79c8e352c03182df1033f",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Tenor sax",
+      "rootMidi": 62,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/saxophone/D4.mp3",
+      "sourceSha256": "54c6383885001a330b68f966490c2244a0b3c7184483781ed5daf25f240051ae",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Tenor sax",
+      "rootMidi": 74,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/saxophone/D5.mp3",
+      "sourceSha256": "94fe0add04ba49525af59f217065671f20e97fb47d3aa86b5992b2a4199c6cd1",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Harp",
+      "rootMidi": 45,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/harp/A2.mp3",
+      "sourceSha256": "62725b3e8718012511a43283574dadc1f129e29fc6368cc4f89a1ff4756a63f4",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Harp",
+      "rootMidi": 55,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/harp/G3.mp3",
+      "sourceSha256": "058a84eeeba662f23659b49845adeccdac15cbb08698850df73092c9ceead7c0",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Harp",
+      "rootMidi": 69,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/harp/A4.mp3",
+      "sourceSha256": "6ea5048f4d224e972d1b21bc725b597693a94cd48502878accbceb283133819d",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Harp",
+      "rootMidi": 79,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/harp/G5.mp3",
+      "sourceSha256": "41ae47b853334d7106cad1bc0fc2de538b366ef0af0d6d6efd6871a4f0752a4e",
+      "frames": 88200,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Xylophone",
+      "rootMidi": 67,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/xylophone/G4.mp3",
+      "sourceSha256": "a5a0122e3111e4ac803d529d11bcff7f0655a76946ad3892af9f57a42310a799",
+      "frames": 80819,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Xylophone",
+      "rootMidi": 72,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/xylophone/C5.mp3",
+      "sourceSha256": "84e3a114c88d5735e6d0fc26dc141283947c5b2cc791ac36c33782d747e37a0a",
+      "frames": 75631,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Xylophone",
+      "rootMidi": 84,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/xylophone/C6.mp3",
+      "sourceSha256": "8a4e5edc7e0ba9087ef8d67d9f5e2e513a4c8350cd0939e06b0e0d5eea9c6adb",
+      "frames": 42803,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    },
+    {
+      "instrument": "Xylophone",
+      "rootMidi": 96,
+      "source": "https://raw.githubusercontent.com/nbrosowsky/tonejs-instruments/622c2f1c32c8cfce4158ddc3eb26e518ddef37e5/samples/xylophone/C7.mp3",
+      "sourceSha256": "c9ac1b4d0f2791a6ff77403ae3400d498f2e6aacfc10fd6ff1dbbc1719e89e16",
+      "frames": 33592,
+      "rate": 22050,
+      "sourceLicense": "CC BY 3.0"
+    }
+  ]
+}

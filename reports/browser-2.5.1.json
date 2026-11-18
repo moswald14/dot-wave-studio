@@ -1,0 +1,14 @@
+{
+  "version": "2.5.1",
+  "browserConsoleErrors": 0,
+  "workingProjectPreserved": true,
+  "savedSounds": 51,
+  "observed": [
+    "An unchanged exact-height entry leaves the saved state current.",
+    "Undo and Redo restore graph focus and the expected point height.",
+    "Ctrl-click on the final selected dot retains one explicit dot.",
+    "Whole wave selects all 32 dots only when requested.",
+    "Invalid height entry with Enter is rejected without an uncaught error.",
+    "Saving clears transient feedback and uses the status bar."
+  ]
+}

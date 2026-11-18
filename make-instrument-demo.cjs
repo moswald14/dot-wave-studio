@@ -1,0 +1,10 @@
+'use strict';
+const C=require('./core.js'),fs=require('node:fs'),path=require('node:path'),out=path.resolve(process.argv[2]||'outputs');
+const p=C.blank();p.song.name='The Instrument Room';p.song.bars=8;p.song.loop={start:0,end:8};p.song.bpm=108;
+const configs=[['Piano','real-piano',60,.45],['Guitar','real-guitar-acoustic',55,.4],['Bass','real-bass-electric',36,.45],['Flute','real-flute',72,.3]];
+p.song.tracks=configs.map(([name,instrument,base,volume],i)=>({id:'demo-'+i,name,instrument,volume,pan:(i-1.5)*.25,mute:false,notes:Array.from({length:16},(_,n)=>({start:n*2,midi:base+[0,4,7,12,7,4,2,7][n%8],duration:i===3?1.6:.8,velocity:.65}))}));
+const audio=C.render(p,'song',44100);fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'Recorded-Instruments-Demo.studio.json'),C.serialize(p));fs.writeFileSync(path.join(out,'Recorded-Instruments-Demo.wav'),Buffer.from(C.encodeStereo(audio)));
+const rate=22050,samples=Float32Array.from({length:rate*.6},(_,i)=>i<rate*.08||i>rate*.48?0:(Math.sin(2*Math.PI*220*i/rate)+.2*Math.sin(4*Math.PI*220*i/rate))*.24);
+fs.writeFileSync(path.join(__dirname,'fixtures','Synthetic-Voice-Take.wav'),Buffer.from(C.IO.encodeWav(samples,rate)));
+const bank=C.Voice.blank();bank.name='Synthetic QA bank';for(const code of ['AA','HH','EH','L','OW'])bank.takes[code]=C.Voice.analyse(samples,rate,code).take;fs.writeFileSync(path.join(__dirname,'fixtures','Synthetic-Voice-Test.voice-bank.json'),JSON.stringify(bank));
+console.log(JSON.stringify({demoSeconds:audio.duration,instruments:configs.length,syntheticVoiceFixtures:true}));
