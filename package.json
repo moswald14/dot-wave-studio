@@ -5,8 +5,10 @@
   "description": "Offline guided music studio with waveform sculpting, sampled instruments and editable arrangements.",
   "scripts": {
     "build": "node build.cjs",
+    "build:pages": "node build-pages.cjs",
     "test": "node verify.cjs",
     "check:release": "node check-release.cjs",
+    "check:pages": "node pages-verify.cjs",
     "start": "node serve.cjs"
   },
   "engines": {

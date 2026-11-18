@@ -4,6 +4,8 @@ A small, playful music studio: **Sound → Beat → Melody → Arrange → Expor
 
 ## Run it
 
+**[Open Dot Wave Studio 2 online](https://moswald14.github.io/dot-wave-studio/)** — the complete studio on GitHub Pages. Projects and voice takes stay in your browser or downloaded project files. Use **Open** to bring a saved project from the local edition; browser drafts are separate for each website.
+
 Download [Dot Wave Studio 2.5.1](releases/Dot-Wave-Studio-2.5.1.html), then open that HTML file in a browser. The guided studio and recorded instrument bank work offline.
 
 For development, install Node.js 24 or newer. No dependency installation is needed:
@@ -39,7 +41,7 @@ See [Wave Shaper controls](Wave-Shaper-guide.md) and the [studio guide](START-HE
 
 The test suite currently contains [64 checks](reports/verification-2.5.1.json). It covers audio/file formats, existing-project migration, voice-controller cancellation, waveform editing, pins, section rendering, solo/export separation, live audio replacement, held-key Undo grouping and keyboard focus restoration. Browser checks are recorded separately; passing automated checks does not verify physical microphone, speaker or touch-device quality.
 
-[Studio checks](https://github.com/moswald14/dot-wave-studio/actions/workflows/studio-checks.yml) runs the suite on each push to `main` and pull request. It also rebuilds the downloadable HTML in a temporary folder and checks that it matches the file in `releases/` byte for byte, with Classic and sample credits preserved. Run `node check-release.cjs` locally for the same build check. The workflow has read-only repository access and does not publish a release.
+[Studio checks](https://github.com/moswald14/dot-wave-studio/actions/workflows/studio-checks.yml) runs the suite on each push to `main` and pull request. It also rebuilds the downloadable HTML in a temporary folder and checks that it matches the file in `releases/` byte for byte, with Classic and sample credits preserved. Run `node check-release.cjs` locally for the same build check. Three Pages package checks verify the online entry, its credits and the publication file list. Tests have read-only repository access. Successful pushes to `main` deploy the checked website through a separate job with Pages-only publishing permissions.
 
 The source is modular JavaScript/CSS. Audio, UI and validation share the same core models; the browser audio worker uses the same renderer as the tests. See [development notes](DEVELOPMENT.md).
 
