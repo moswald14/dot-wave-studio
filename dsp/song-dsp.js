@@ -4,6 +4,7 @@
  const S=typeof module!=='undefined'&&module.exports?require('./studio-dsp.js'):root.StudioDSP;
  const D=typeof module!=='undefined'&&module.exports?require('./drum-dsp.js'):root.DrumDSP;
  const Sample=typeof module!=='undefined'&&module.exports?require('./sampler-dsp.js'):root.SamplerDSP;
+ const Vocal=typeof module!=='undefined'&&module.exports?require('./vocal-dsp.js'):root.VocalDSP;
  if(!S||!D)throw new Error('SongDSP needs StudioDSP and DrumDSP.');
  const C=typeof module!=='undefined'&&module.exports?require('./clip-dsp.js'):root.ClipDSP;
  const MAX_NOTES=10000,MAX_BEATS=320,DRUM_NOTES={kick:36,snare:38,hat:42,perc:75};
@@ -24,7 +25,7 @@
  function defaultSong(){return {name:'My pixel song',bpm:110,bars:16,meter:{numerator:4,denominator:4},loop:{start:0,end:16},tracks:[{id:'lead',name:'Lead',instrument:'piano',...C.controls({volume:.7}),notes:[]},{id:'bass',name:'Bass',instrument:'stock-sine',...C.controls({volume:.65}),notes:[]},{id:'pad',name:'Pad',instrument:'stock-triangle',...C.controls({volume:.5}),notes:[]}],beats:[],clips:[],audio:[],waves:[]};}
  function signalAt(signals,key){return signals instanceof Map?signals.get(key):signals&&Object.hasOwn(signals,key)?signals[key]:undefined;}
  function unique(values,label){if(new Set(values.map(v=>v.id)).size!==values.length)throw new Error(`Duplicate ${label} IDs.`);}
- function checkedNote(note){if(!note||typeof note!=='object')throw new Error('Invalid piano note.');return {start:number(note.start,0,MAX_BEATS,'note start'),duration:number(note.duration,1/960,64,'note length'),midi:integer(note.midi,0,127,'MIDI note'),velocity:number(note.velocity,0,1,'note velocity')};}
+ function checkedNote(note){if(!note||typeof note!=='object')throw new Error('Invalid piano note.');return {start:number(note.start,0,MAX_BEATS,'note start'),duration:number(note.duration,1/960,64,'note length'),midi:integer(note.midi,0,127,'MIDI note'),velocity:number(note.velocity,0,1,'note velocity'),...(note.vocal!==undefined?{vocal:Vocal.note(note.vocal)}:{})};}
  function validateSong(value,signals){
   if(!value||typeof value!=='object')throw new Error('Choose a continuityLAB song.');
   const bars=integer(value.bars,1,64,'song measures'),m=meter(value.meter),loop=value.loop;
@@ -81,6 +82,7 @@
  function renderNote(instrument,signal,note,{rate=44100,bpm=110,pitch=0,room=0}={}){
   checkedRate(rate);number(bpm,40,240,'note tempo');const n=checkedNote({start:0,...note}),frequency=midiFrequency(n.midi)*2**(number(pitch,-24,24,'pitch')/12);
   roomEffects(room);
+  if(signal?.kind==='singing-instrument')return roomAudio(Vocal.render(signal.vocal.id,n,{rate,bpm,pitch,bank:signal.vocal.bank}),rate,room);
   if(signal?.kind==='sampled-instrument')return roomAudio(Sample.render(signal,n,{rate,bpm,pitch}),rate,room);
   if(signal?.patchTone&&instrument!=='drums'){const Patch=typeof module!=='undefined'&&module.exports?require('./patch-tone.js'):root.PatchTone;return roomAudio(Patch.renderNote(signal.patchTone,n,{rate,bpm,pitch}),rate,room);}
   if(instrument==='drums'){const voice=drumVoice(n.midi);voice.pitch=clamp(voice.pitch*2**(pitch/12),30,2000);const hit=D.renderHit(signal,voice,rate);if(n.velocity!==1)for(let i=0;i<hit.length;i++)hit[i]*=n.velocity;return roomAudio(hit,rate,room);}
@@ -134,7 +136,7 @@
     const effectWave=signalAt(signals,track.instrument==='drums'?drumVoice(n.midi).waveId:track.instrument),effectTail=(FX.tail(effectWave?.effects)+FX.tail(roomEffects(track.room)))/secondsPerBeat;
     const audibleBeats=(track.instrument==='drums'?drumVoice(n.midi).decay/secondsPerBeat:n.duration+(effectWave?.sampled?.release??.12)/secondsPerBeat)+effectTail;
     if(n.start>=to||n.start+audibleBeats<=from||n.velocity===0)continue;
-    const durationBeats=Math.max(1/960,Math.min(n.duration,to-n.start)),key=JSON.stringify([track.instrument,n.midi,durationBeats,n.velocity,track.pitch,track.room]);
+    const durationBeats=Math.max(1/960,Math.min(n.duration,to-n.start)),key=JSON.stringify([track.instrument,n.midi,durationBeats,n.velocity,track.pitch,track.room,n.vocal]);
     let buffer=noteCache.get(key);if(!buffer){const waveId=track.instrument==='drums'?drumVoice(n.midi).waveId:track.instrument;buffer=renderNote(track.instrument,signalAt(signals,waveId),{...n,duration:durationBeats},{rate,bpm:song.bpm,pitch:track.pitch,room:track.room});if(noteCache.size<64&&cachedNoteFrames+buffer.length<=rate*30){noteCache.set(key,buffer);cachedNoteFrames+=buffer.length;}}
     add(buffer,n.start,track.volume,true,track,track.range||{start:fromNote,duration:toNote-fromNote+.12/secondsPerBeat});
    }
@@ -173,7 +175,7 @@
   for(const track of expandedTracks(song)){
    if(track.mute)continue;
    const notes=[];for(const note of track.notes){const start=Math.max(from,note.start),end=Math.min(to,note.start+note.duration);if(end>start&&note.velocity*track.volume>0)notes.push({...note,midi:clamp(Math.round(note.midi+track.pitch),0,127),start:start-from,duration:end-start,velocity:note.velocity*track.volume});}
-   const key=track.parentId||track.id;if(noteTracks.has(key))noteTracks.get(key).notes.push(...notes);else{const out={name:track.name,channel:track.instrument==='drums'?9:track.channel,program:track.instrument==='drums'?undefined:track.instrument==='piano'?0:Sample.program(track.instrument)??80,notes};noteTracks.set(key,out);tracks.push(out);}
+   const key=track.parentId||track.id;if(noteTracks.has(key))noteTracks.get(key).notes.push(...notes);else{const out={name:track.name,channel:track.instrument==='drums'?9:track.channel,program:track.instrument==='drums'?undefined:track.instrument==='piano'?0:track.instrument.startsWith('vocal-')?54:Sample.program(track.instrument)??80,notes};noteTracks.set(key,out);tracks.push(out);}
   }
   const drums=[];for(const clip of song.clips){if(clip.start>=to||clip.mute)continue;const beat=song.beats.find(b=>b.id===clip.beatId);for(const event of patternEvents(beat,clip.start))if(event.start>=from&&event.start<to&&event.velocity*event.volume*event.track.level*clip.volume>0)drums.push({start:event.start-from,duration:Math.min(.125,event.gate??.125,to-event.start),midi:DRUM_NOTES[event.track.id]??DRUM_NOTES[["kick","snare","hat","perc"][D.PAD_MAP[+event.track.id.slice(4)]?.track]]??75,velocity:event.velocity*event.volume*event.track.level*clip.volume});}
   if(drums.length)tracks.push({name:'Drums',channel:9,notes:drums});

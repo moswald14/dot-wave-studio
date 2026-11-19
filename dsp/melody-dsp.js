@@ -4,6 +4,7 @@
  // Times and lengths are quarter-note beats. Resize trims/drops notes past
  // the new end; callers should retain an undo snapshot before shortening.
  const Song=typeof module!=='undefined'&&module.exports?require('./song-dsp.js'):root.SongDSP;
+ const Vocal=typeof module!=='undefined'&&module.exports?require('./vocal-dsp.js'):root.VocalDSP;
  const MAX_NOTES=2048,MAX_BARS=16,MIN_DURATION=1/960;
  const TRACKS=[['melody','Melody','piano',.65],['chords','Chords','stock-triangle',.45],['bass','Bass','stock-sine',.6],['rhythm','Rhythm','drums',.5]];
  function number(value,min,max,label){if(typeof value!=='number'||!Number.isFinite(value)||value<min||value>max)throw new Error('Invalid '+label+'.');return value;}
@@ -14,7 +15,7 @@
  function checkedNote(n,end){
   if(!n||typeof n!=='object')throw new Error('Invalid composer note.');const start=number(n.start,0,end-MIN_DURATION,'note position'),duration=number(n.duration,MIN_DURATION,64,'note length');
   if(start+duration>end+1e-9)throw new Error('A note extends beyond the melody.');
-  return {start,duration:Math.min(duration,end-start),midi:integer(n.midi,0,127,'note pitch'),velocity:number(n.velocity,0,1,'note velocity')};
+  return {start,duration:Math.min(duration,end-start),midi:integer(n.midi,0,127,'note pitch'),velocity:number(n.velocity,0,1,'note velocity'),...(n.vocal!==undefined?{vocal:Vocal.note(n.vocal)}:{})};
  }
  function validate(value,signals){
   if(!value||value.kind!=='dot-melody-lab'||value.version!==1)throw new Error('Choose a melody & rhythm LAB project.');

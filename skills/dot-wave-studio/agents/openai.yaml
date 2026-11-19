@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dot Wave Studio"
+  short_description: "Make editable songs, patch tones and singing vocals"
+  default_prompt: "Use $dot-wave-studio to make music in my Studio, preserving my saved sounds and keeping the song editable."

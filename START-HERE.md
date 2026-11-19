@@ -1,6 +1,6 @@
-# Dot Wave Studio 2.6.0
+# Dot Wave Studio 2.7.0
 
-**Open `Dot-Wave-Studio-2.6.0.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
+**Open `Dot-Wave-Studio-2.7.0.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
 
 The new studio follows **Sound → Beat → Melody → Arrange → Export**. All five steps share your project, tempo, playback controls, Undo, and Redo. Switching steps keeps sequenced playback going. Start silently, then press Play when you want to hear it.
 
@@ -53,3 +53,7 @@ The `Source` folder contains the complete modular source, existing audio modules
 Version 2.5.1 keeps a held waveform arrow key in one Undo edit, restores graph keyboard focus after Undo/Redo, keeps the last selected point explicit, and ignores unchanged height entries. Saving reports its result in the status bar so the graph stays clear.
 
 **WOOFpad is back in Sound.** Wander, catch a pair, play it on the patch keyboard and Keep patch tone. Kept tones retain both editable voices and effects when used in melodies and arrangements. Patch tones now leads the Sound step, with direct A/B tuning, linked pitch changes and interval starters. Original patch and WOOF switchboard files can be opened in the panel. See `WOOFpad-guide.md`.
+
+**Sound → Vocals** gives you Soft singer, Clear singer, Dream choir and Your voice kit. Choose a voice, paint notes and put words on them in Melody. `_` carries a vowel into the next note; each note's word, pronunciation, vibrato, breath and color remain editable. Keep vocal patterns and arrange independent copies. Built-in singing has a synthetic character and works offline. WAV keeps the sound, MIDI includes timed lyrics, and a Studio project keeps the complete vocal settings. See `Vocals-guide.md` or open `examples/Singing-Drift.studio.json`.
+
+The reusable Codex skill is in `skills/dot-wave-studio/`. It covers the working studio, WOOFpad patches, vocals, composing and editable projects, with a helper for inspecting and rendering saved music. Install that folder in your Codex skills directory and invoke `$dot-wave-studio` in a new chat.

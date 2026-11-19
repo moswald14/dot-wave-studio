@@ -140,11 +140,11 @@ class DotAudio {
       source.start(start);source.stop(start+3);this.changed();
     }catch(error){if(ticket===this.miniTicket){this.miniPending=null;this.changed();throw error;}}
   }
-  async preview(project, midi, instrument = 'piano', velocity = .6,room=0) {
+  async preview(project, midi, instrument = 'piano', velocity = .6,room=0,vocal=null) {
     const ticket = this.intent; await this.init(); if (ticket !== this.intent) return;
     const waveId = instrument === 'drums' ? DotWave.Song.drumVoice(midi).waveId : instrument;
     const signal = DotWave.signals(project.library,project.voiceBank)[waveId];
-    const samples = DotWave.Song.renderNote(instrument, signal, {start: 0, duration: .65, midi, velocity}, {rate: this.context.sampleRate, bpm: project.song.bpm,room});
+    const samples = DotWave.Song.renderNote(instrument, signal, {start: 0, duration: .65, midi, velocity,...(vocal?{vocal}:{})}, {rate: this.context.sampleRate, bpm: project.song.bpm,room});
     if (ticket !== this.intent) return;
     const source = this.context.createBufferSource(), gain = this.context.createGain();
     const buffer = this.context.createBuffer(1, samples.length, this.context.sampleRate); buffer.copyToChannel(samples, 0);

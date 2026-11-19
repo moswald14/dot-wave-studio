@@ -38,6 +38,7 @@
     number(note.start,0,1e6,'note position');number(note.duration,0.000001,1e6,'note duration');number(note.midi,0,127,'note number',true);number(note.velocity,0,1,'note velocity');
     if(note.velocity===0)continue;
     const start=Math.round(note.start*ppq),finish=Math.max(start+1,Math.round((note.start+note.duration)*ppq));number(finish,0,0x0fffffff,'note end tick',true);end=Math.max(end,finish);
+    if(note.vocal){if(typeof note.vocal.lyric!=='string'||note.vocal.lyric.length>64)fail('Invalid MIDI lyric.');events.push({tick:start,priority:2.5,data:meta(5,utf8(note.vocal.lyric))});}
     events.push({tick:start,priority:3,data:Uint8Array.of(0x90|track.channel,note.midi,Math.max(1,Math.round(note.velocity*127)))});
     events.push({tick:finish,priority:2,data:Uint8Array.of(0x80|track.channel,note.midi,0)});
    }
@@ -55,7 +56,7 @@
   const format=view.getUint16(8),declared=view.getUint16(10),division=view.getUint16(12);
   if(format===2)fail('MIDI format 2 contains separate sequences. Export format 0 or 1 instead.');if(format!==0&&format!==1)fail('Unsupported MIDI file format.');if(division&0x8000)fail('SMPTE-timed MIDI is unsupported. Export a beat-timed MIDI file instead.');if(!division||!declared||declared>128||(format===0&&declared!==1))fail('Invalid MIDI track count or time division.');offset=8+headerSize;
   for(let trackIndex=0;trackIndex<declared;trackIndex++){
-   if(offset+8>data.length||tag(offset)!=='MTrk')fail('A MIDI track chunk is missing.');const size=view.getUint32(offset+4),end=offset+8+size;if(end>data.length)fail('The MIDI track is truncated.');let pos=offset+8,tick=0,running=0,name='',ended=false;const channels=new Map(),programs=new Map(),pending=new Map();
+   if(offset+8>data.length||tag(offset)!=='MTrk')fail('A MIDI track chunk is missing.');const size=view.getUint32(offset+4),end=offset+8+size;if(end>data.length)fail('The MIDI track is truncated.');let pos=offset+8,tick=0,running=0,name='',ended=false;const channels=new Map(),programs=new Map(),pending=new Map(),lyrics=[];
    function read(){if(pos>=end)fail('The MIDI event is truncated.');return data[pos++];}
    function vlq(){let value=0;for(let i=0;i<4;i++){const valueByte=read();value=value*128+(valueByte&127);if(!(valueByte&128))return value;}fail('Invalid MIDI variable-length number.');}
    function take(length){if(length<0||pos+length>end)fail('The MIDI event data is truncated.');const result=data.subarray(pos,pos+length);pos+=length;return result;}
@@ -69,6 +70,7 @@
      const type=read(),length=vlq(),payload=take(length);
      if(type===47){if(length!==0)fail('Invalid MIDI end-of-track event.');ended=true;break;}
      if(type===3){if(!name)name=text(payload).replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,120);}
+     else if(type===5){if(lyrics.length<MAX_NOTES)lyrics.push({start:tick/division,text:text(payload).replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,64)});}
      else if(type===81){if(length!==3)fail('Invalid MIDI tempo event.');const tempo=payload[0]*65536+payload[1]*256+payload[2];if(!tempo)fail('MIDI tempo cannot be zero.');tempoEvents.push({tick,order:order++,tempo});}
      else if(type===88){if(length!==4||!payload[0]||payload[1]>5)fail('Invalid MIDI time signature.');meterEvents.push({tick,order:order++,numerator:payload[0],denominator:2**payload[1]});}
      continue;
@@ -84,7 +86,7 @@
    }
    if(!ended)warnings.add('A track had no end marker; its chunk boundary was used.');
    if(pending.size){warnings.add('Notes without note-off events were ended at their track boundary.');for(const [key,queue]of pending){const [channel,midi]=key.split(':').map(Number);while(queue.length)close(channel,midi,Math.max(tick,queue[0].tick+1));}}
-   maxTick=Math.max(maxTick,tick);for(const record of channels.values()){record.name=(name||`Track ${trackIndex+1}`)+(channels.size>1?` · Ch ${record.channel+1}`:'');record.notes.sort((a,b)=>a.start-b.start||a.midi-b.midi);for(const note of record.notes)maxTick=Math.max(maxTick,Math.round((note.start+note.duration)*division));if(record.notes.length)tracks.push(record);}
+   maxTick=Math.max(maxTick,tick);for(const record of channels.values()){record.name=(name||`Track ${trackIndex+1}`)+(channels.size>1?` · Ch ${record.channel+1}`:'');record.notes.sort((a,b)=>a.start-b.start||a.midi-b.midi);for(const note of record.notes)maxTick=Math.max(maxTick,Math.round((note.start+note.duration)*division));if(lyrics.length)record.lyrics=lyrics.map(v=>({...v}));if(record.notes.length)tracks.push(record);}
    offset=end;
   }
   tempoEvents.sort((a,b)=>a.tick-b.tick||a.order-b.order);meterEvents.sort((a,b)=>a.tick-b.tick||a.order-b.order);

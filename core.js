@@ -11,13 +11,14 @@
   const Shape = node ? require('./shaping.js') : root.WaveShape;
   const Arrangement=node?require('./arrangement.js'):root.ArrangementTools;
   const Sample=dep('sampler-dsp','SamplerDSP'),Voice=dep('voice-dsp','VoiceDSP');
+  const Vocal=dep('vocal-dsp','VocalDSP');
   const clone = value => JSON.parse(JSON.stringify(value));
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   let sequence = 0;
   const id = prefix => prefix + '-' + Date.now().toString(36) + '-' + (++sequence).toString(36);
   const assert = (ok, text) => { if (!ok) throw new Error(text); };
   const name = (value, max = 64) => { assert(typeof value === 'string' && value.trim() && value.length <= max, 'Use a name of 1–' + max + ' characters.'); return value.trim(); };
-  function signals(library,voiceBank) { return {...Sample.signals(),...Voice.signals(voiceBank),...Object.fromEntries(library.map(w => [w.id, W.signal(w)]))}; }
+  function signals(library,voiceBank) { return {...Sample.signals(),...Voice.signals(voiceBank),...Vocal.signals(voiceBank),...Object.fromEntries(library.map(w => [w.id, W.signal(w)]))}; }
   function patchDefault() {
     return {kind: 'dot-wave-studio', project: S.defaultProject(), freePair: null, pitch: 134,
       level: 0, volume: .5, inverted: false, eq: {gains: Array(10).fill(0), bypass: false}, throughEQ: false, channel: 0};
@@ -107,6 +108,7 @@
   function serialize(p) { const v = validate(p); return JSON.stringify({...v, song: encodeSong(v.song)}, null, 2); }
   function legacy(p) {
     const v = validate(p), c = v.compatibility;
+    assert(!v.melody.tracks.concat(v.song.tracks).some(t=>t.instrument.startsWith('vocal-')||t.notes.some(n=>n.vocal)||(t.phrases||[]).some(c=>c.notes.some(n=>n.vocal)))&&!v.patterns.some(t=>t.instrument.startsWith('vocal-')||t.notes.some(n=>n.vocal)),'Singing voices and lyrics need a Studio 2 project. Export WAV to keep the sound, or save a Studio project to keep editing.');
     assert(!v.library.some(w=>w.patchTone),'Editable patch tones need a Studio 2 project. Export WAV for Classic listening, or keep the Studio project for editing.');
     assert(!v.melody.tracks.concat(v.song.tracks).some(t=>t.room>0),'Room ambience needs a new Studio project, or export WAV to keep its sound.');
     assert(!Object.keys(v.voiceBank.takes).length&&!v.melody.tracks.concat(v.song.tracks).some(t=>t.instrument.startsWith('real-')),'Recorded instruments and voice banks need a Studio project file. Export WAV for a rendered copy, or save this Studio project to keep editing.');
@@ -280,7 +282,7 @@
     for (let b = 1; b < 8; b++) p.song.clips.push({...clone(first), id: id('beatclip'), start: b * 4});
     return validate(p);
   }
-  const api = {S, D, Song, M, W, IO, FX, Collision, Patch,savePatchTone,loadPatchTone,Shape,Sample,Voice,Arrangement,renderSoundPreview, renderPatchPreview, clone, clamp, id, assert, blank, starter, validate, open, serialize, legacy,
+  const api = {S, D, Song, M, W, IO, FX, Collision, Patch,savePatchTone,loadPatchTone,Shape,Sample,Voice,Vocal,Arrangement,renderSoundPreview, renderPatchPreview, clone, clamp, id, assert, blank, starter, validate, open, serialize, legacy,
     signals, syncTempo, saveSound, setSoundFromWave, patternFromPart, checkedPattern, extend, addPattern, addBeat,
     findClip, clipLength, noteKey, transformNotes, scopeSong, render, encodeStereo, encodeSong};
   if (node) module.exports = api; else root.DotWave = api;
