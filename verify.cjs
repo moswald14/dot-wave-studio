@@ -192,7 +192,9 @@ test('Actual 64-measure music projects migrate with all their custom sounds and 
 });
 require('./arrangement-verify.cjs')(C,test);
 require('./shaper-verify.cjs')(C,test);
+require('./woof-verify.cjs')(C,test);
 async function transportTests(){
+  passed.push(...await require('./woof-verify.cjs').asyncChecks(C));
   passed.push(...await require('./recorder-harness.cjs')());
   class Param{constructor(value=1){this.value=value;}setValueAtTime(v){this.value=v;}linearRampToValueAtTime(v){this.value=v;}setTargetAtTime(v){this.value=v;}cancelScheduledValues(){}}
   class Node{constructor(){this.gain=new Param();this.frequency=new Param();this.Q=new Param();this.threshold=new Param();this.knee=new Param();this.ratio=new Param();this.attack=new Param();this.release=new Param();this.starts=[];}connect(){}disconnect(){}start(...args){this.starts.push(args);}stop(at){this.stopped=true;this.stopTime=at;}}
@@ -212,4 +214,4 @@ async function transportTests(){
   const withSections=C.clone(p);withSections.sections=[{id:'return',name:'Return',from:2,to:4}];let heard;audio.render=async(project,scope,options)=>{heard={scope,options};return data;};await audio.play(withSections,'section',0,{sectionId:'return',soloIds:[p.song.tracks[0].id]});assert.equal(audio.startBeat,8);assert.equal(heard.scope,'section');assert.equal(heard.options.audition.sectionId,'return');assert.equal(heard.options.audition.soloIds[0],p.song.tracks[0].id);audio.stop();passed.push('Section playback carries its start measure and listening-only solos to the renderer');
   console.log('PASS playback cancellation, live clock and pause');
 }
-transportTests().then(()=>{const report={version:'2.5.1',checkedAt:new Date().toISOString(),passed:passed.length,checks:passed};fs.writeFileSync(process.argv[2]?path.resolve(process.argv[2]):path.join(__dirname,'verification.json'),JSON.stringify(report,null,2));console.log(passed.length+' checks passed.');}).catch(error=>{console.error(error);process.exitCode=1;});
+transportTests().then(()=>{const report={version:'2.6.0',checkedAt:new Date().toISOString(),passed:passed.length,checks:passed};fs.writeFileSync(process.argv[2]?path.resolve(process.argv[2]):path.join(__dirname,'verification.json'),JSON.stringify(report,null,2));console.log(passed.length+' checks passed.');}).catch(error=>{console.error(error);process.exitCode=1;});

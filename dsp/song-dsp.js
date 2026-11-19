@@ -82,6 +82,7 @@
   checkedRate(rate);number(bpm,40,240,'note tempo');const n=checkedNote({start:0,...note}),frequency=midiFrequency(n.midi)*2**(number(pitch,-24,24,'pitch')/12);
   roomEffects(room);
   if(signal?.kind==='sampled-instrument')return roomAudio(Sample.render(signal,n,{rate,bpm,pitch}),rate,room);
+  if(signal?.patchTone&&instrument!=='drums'){const Patch=typeof module!=='undefined'&&module.exports?require('./patch-tone.js'):root.PatchTone;return roomAudio(Patch.renderNote(signal.patchTone,n,{rate,bpm,pitch}),rate,room);}
   if(instrument==='drums'){const voice=drumVoice(n.midi);voice.pitch=clamp(voice.pitch*2**(pitch/12),30,2000);const hit=D.renderHit(signal,voice,rate);if(n.velocity!==1)for(let i=0;i<hit.length;i++)hit[i]*=n.velocity;return roomAudio(hit,rate,room);}
   const hold=n.duration*60/bpm,release=instrument==='piano'?.12:.08,frames=Math.max(2,Math.round((hold+release)*rate)),output=new Float32Array(frames);
   if(n.velocity===0||frequency>rate*.45)return output;

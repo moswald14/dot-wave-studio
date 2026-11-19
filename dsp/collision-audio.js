@@ -125,6 +125,6 @@
    return {stop,disconnect,nodes,oscs,scale:p.scale,startTime:at};
   }catch(error){stop(context.currentTime);disconnect();throw error;}
  }
- const api={validatePair,prepare,preview,render,encodeWav,create};
+ const api={validatePair,prepare,preview,render,encodeWav,create,mix:mixed};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.CollisionAudio=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

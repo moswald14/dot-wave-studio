@@ -6,7 +6,7 @@ A small, playful music studio: **Sound → Beat → Melody → Arrange → Expor
 
 **[Open Dot Wave Studio 2 online](https://moswald14.github.io/dot-wave-studio/)** — the complete studio on GitHub Pages. Projects and voice takes stay in your browser or downloaded project files. Use **Open** to bring a saved project from the local edition; browser drafts are separate for each website.
 
-Download [Dot Wave Studio 2.5.1](releases/Dot-Wave-Studio-2.5.1.html), then open that HTML file in a browser. The guided studio and recorded instrument bank work offline.
+Download [Dot Wave Studio 2.6.0](releases/Dot-Wave-Studio-2.6.0.html), then open that HTML file in a browser. The guided studio and recorded instrument bank work offline.
 
 For development, install Node.js 24 or newer. No dependency installation is needed:
 
@@ -17,6 +17,10 @@ node serve.cjs
 ```
 
 Open the local URL printed by the server. The build writes self-contained HTML files to `dist/`. `npm test`, `npm run build` and `npm start` are equivalent shortcuts.
+
+## WOOFpad and patch tones
+
+WOOFpad is back directly in **Sound**. Wander through two-wave collisions, catch a tone, seed one from the phone keypad, like/recall discoveries and play the full patch on a one-to-three-octave keyboard. Kept patch tones retain their editable recipes and transpose both voices together in melodies and arrangements. Capture a keyboard patch while continuing to explore. Original WOOF switchboards and Classic patch files open here. See the [WOOFpad guide](WOOFpad-guide.md).
 
 ## Wave Shaper
 
@@ -39,7 +43,7 @@ See [Wave Shaper controls](Wave-Shaper-guide.md) and the [studio guide](START-HE
 
 ## Verification and source
 
-The test suite currently contains [64 checks](reports/verification-2.5.1.json). It covers audio/file formats, existing-project migration, voice-controller cancellation, waveform editing, pins, section rendering, solo/export separation, live audio replacement, held-key Undo grouping and keyboard focus restoration. Browser checks are recorded separately; passing automated checks does not verify physical microphone, speaker or touch-device quality.
+The test suite currently contains [82 checks](reports/verification-2.6.0.json). It covers audio/file formats, existing-project migration, voice-controller cancellation, waveform editing, pins, section rendering, solo/export separation, live audio replacement, held-key Undo grouping and keyboard focus restoration. Browser checks are recorded separately; passing automated checks does not verify physical microphone, speaker or touch-device quality.
 
 [Studio checks](https://github.com/moswald14/dot-wave-studio/actions/workflows/studio-checks.yml) runs the suite on each push to `main` and pull request. It also rebuilds the downloadable HTML in a temporary folder and checks that it matches the file in `releases/` byte for byte, with Classic and sample credits preserved. Run `node check-release.cjs` locally for the same build check. Three Pages package checks verify the online entry, its credits and the publication file list. Tests have read-only repository access. Successful pushes to `main` deploy the checked website through a separate job with Pages-only publishing permissions.
 

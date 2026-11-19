@@ -7,6 +7,7 @@
   const W = dep('wave-library', 'WaveLibrary'), IO = dep('midi-io', 'MidiIO');
   const FX = dep('effects-dsp', 'EffectsDSP');
   const Collision = dep('collision-audio', 'CollisionAudio');
+  const Patch = dep('patch-tone','PatchTone');
   const Shape = node ? require('./shaping.js') : root.WaveShape;
   const Arrangement=node?require('./arrangement.js'):root.ArrangementTools;
   const Sample=dep('sampler-dsp','SamplerDSP'),Voice=dep('voice-dsp','VoiceDSP');
@@ -106,6 +107,7 @@
   function serialize(p) { const v = validate(p); return JSON.stringify({...v, song: encodeSong(v.song)}, null, 2); }
   function legacy(p) {
     const v = validate(p), c = v.compatibility;
+    assert(!v.library.some(w=>w.patchTone),'Editable patch tones need a Studio 2 project. Export WAV for Classic listening, or keep the Studio project for editing.');
     assert(!v.melody.tracks.concat(v.song.tracks).some(t=>t.room>0),'Room ambience needs a new Studio project, or export WAV to keep its sound.');
     assert(!Object.keys(v.voiceBank.takes).length&&!v.melody.tracks.concat(v.song.tracks).some(t=>t.instrument.startsWith('real-')),'Recorded instruments and voice banks need a Studio project file. Export WAV for a rendered copy, or save this Studio project to keep editing.');
     return {kind: 'dot-studio-project', version: 1,sections:v.sections,
@@ -126,6 +128,10 @@
     p.patch.project[side] = {...S.source('sine'), points: S.capture(W.signal(wave).table), shape: 'custom'};
     p.patch.project.effects = clone(wave.effects || []); p.patch.project.amount = side === 'a' ? 0 : 1;
   }
+  function savePatchTone(p,title,rootMode='concert'){
+    const recipe=Patch.recipe(p.patch,rootMode),wave=saveSound(p,title);wave.patchTone=recipe;return wave;
+  }
+  function loadPatchTone(p,id){const wave=p.library.find(w=>w.id===id);assert(wave?.patchTone,'Choose a kept patch tone.');p.patch=clone(Patch.validateRecipe(wave.patchTone).patch);return wave;}
   function patternFromPart(p, partId, selectedIds, title) {
     const track = p.melody.tracks.find(t => t.id === partId); assert(track, 'Choose a melody part.');
     const selected = selectedIds?.length ? track.notes.filter(n => selectedIds.includes(noteKey(n))) : track.notes;
@@ -236,7 +242,7 @@
     return buffer;
   }
   function renderSoundPreview(wave,{rate=44100}={}) {
-    const w=W.validateWave(wave);assert(Number.isInteger(rate)&&rate>=8000&&rate<=192000,'Choose a supported audio sample rate.');
+    const w=W.validateWave(wave);if(w.patchTone)return renderPatchPreview(w.patchTone.patch,'result',{rate});assert(Number.isInteger(rate)&&rate>=8000&&rate<=192000,'Choose a supported audio sample rate.');
     const frequency=w.frequency??134,table=S.reconstruct(w.real,w.imag,Math.floor(rate*.45/frequency));
     const warm=Math.min(2,FX.tail(w.effects)),pre=Math.ceil(warm*rate),frames=rate*3;
     const raw=Float32Array.from({length:pre+frames},(_,i)=>S.sample(table,i*frequency/rate)*.65);
@@ -274,7 +280,7 @@
     for (let b = 1; b < 8; b++) p.song.clips.push({...clone(first), id: id('beatclip'), start: b * 4});
     return validate(p);
   }
-  const api = {S, D, Song, M, W, IO, FX, Collision, Shape,Sample,Voice,Arrangement,renderSoundPreview, renderPatchPreview, clone, clamp, id, assert, blank, starter, validate, open, serialize, legacy,
+  const api = {S, D, Song, M, W, IO, FX, Collision, Patch,savePatchTone,loadPatchTone,Shape,Sample,Voice,Arrangement,renderSoundPreview, renderPatchPreview, clone, clamp, id, assert, blank, starter, validate, open, serialize, legacy,
     signals, syncTempo, saveSound, setSoundFromWave, patternFromPart, checkedPattern, extend, addPattern, addBeat,
     findClip, clipLength, noteKey, transformNotes, scopeSong, render, encodeStereo, encodeSong};
   if (node) module.exports = api; else root.DotWave = api;

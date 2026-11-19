@@ -1,6 +1,6 @@
-# Dot Wave Studio 2.5.1
+# Dot Wave Studio 2.6.0
 
-**Open `Dot-Wave-Studio-2.5.1.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
+**Open `Dot-Wave-Studio-2.6.0.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
 
 The new studio follows **Sound → Beat → Melody → Arrange → Export**. All five steps share your project, tempo, playback controls, Undo, and Redo. Switching steps keeps sequenced playback going. Start silently, then press Play when you want to hear it.
 
@@ -40,7 +40,7 @@ Each wave has its own **Smoothness** slider, from 0% to 100%. It gently rounds t
 
 **Save project** downloads a `.studio.json` file. Open it to continue on another computer. Browser recovery is a convenience; keep a file as your backup. Ctrl+S saves, Ctrl+O opens, Space plays or pauses, and Escape stops all sound. Ctrl+Z and Ctrl+Shift+Z undo and redo. On selected notes, arrows move and Shift+left/right changes their length.
 
-Classic `.studio.json` projects open in the new studio. The export page also offers **Classic project** files that open in the original program. The included `Dot-Wave-Classic.html` keeps the specialized tools available through **More studio tools**: room tuning, voiceLAB, WOOFpad, ROM sounds, SNES DJ, humming, YouTube and the landline beta. Those specialized tools retain their original interfaces and requirements.
+Classic `.studio.json` projects open in the new studio. The export page also offers **Classic project** files that open in the original program. The included `Dot-Wave-Classic.html` keeps the specialized tools available through **More studio tools**: room tuning, voiceLAB, ROM sounds, SNES DJ, humming, YouTube and the landline beta. Those specialized tools retain their original interfaces and requirements.
 
 Room ambience, recorded instruments and the new voice bank need the new Studio project format. Classic export refuses these projects instead of silently dropping their recordings or changing their instruments. Use a new Studio project for editing, or WAV for an audio handoff.
 
@@ -51,3 +51,5 @@ This is a separate local edition. Publishing and Home Assistant installation hav
 The `Source` folder contains the complete modular source, existing audio modules, build tools, and reproducible checks. No external libraries or fonts are needed for the new studio.
 
 Version 2.5.1 keeps a held waveform arrow key in one Undo edit, restores graph keyboard focus after Undo/Redo, keeps the last selected point explicit, and ignores unchanged height entries. Saving reports its result in the status bar so the graph stays clear.
+
+**WOOFpad is back in Sound.** Wander, catch a pair, play it on the patch keyboard and Keep patch tone. Kept tones retain both editable voices and effects when used in melodies and arrangements. Patch tones now leads the Sound step, with direct A/B tuning, linked pitch changes and interval starters. Original patch and WOOF switchboard files can be opened in the panel. See `WOOFpad-guide.md`.

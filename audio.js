@@ -8,6 +8,7 @@ class DotAudio {
     this.bpm = 96;
     this.mini = null; this.miniPending = null; this.miniTicket = 0;
     this.audition={};this.startBeat=0;
+    this.patchVoices=new Map();this.patchPending=new Map();this.patchTails=new Set();this.patchSerial=0;
   }
   async init() {
     if (!this.context) {
@@ -109,7 +110,7 @@ class DotAudio {
   }
   stop() {
     this.intent++; this.refreshRevision++; clearTimeout(this.refreshTimer); this.playing = false; this.pending = false;
-    this.stopMiniPreview();
+    this.stopMiniPreview();this.stopPatches();
     for (const entry of this.sources) { try { entry.source.stop(); } catch {} entry.source.disconnect(); entry.gain.disconnect(); }
     this.sources.clear(); this.current = null; this.positionWhenStopped = 0; this.changed();
   }
@@ -122,6 +123,7 @@ class DotAudio {
   }
   miniRemaining() { return this.mini&&this.context?Math.max(0,Math.min(3,this.mini.end-this.context.currentTime)):0; }
   async previewSound(wave,patchRequest=null) {
+    this.stopPatches();
     if(this.mini?.id===wave.id||this.miniPending===wave.id){this.stopMiniPreview();return;}
     this.stopMiniPreview();const ticket=++this.miniTicket;
     this.miniPending=wave.id;this.changed();
@@ -150,6 +152,42 @@ class DotAudio {
     const entry = {source, gain}; this.sources.add(entry);
     source.onended = () => { source.disconnect(); gain.disconnect(); this.sources.delete(entry); };
     source.start();
+  }
+  async startPatch(key,value,{midi=null,level=-30}={}) {
+    this.releasePatch(key,true);this.stopMiniPreview();
+    const ticket=++this.patchSerial;this.patchPending.set(key,ticket);
+    let voice;
+    try {
+      const recipe=DotWave.Patch.validateRecipe(value),context=await this.init();
+      if(this.patchPending.get(key)!==ticket)return;
+      const pair=midi===null?DotWave.Patch.pair(recipe.patch):DotWave.Patch.notePair(recipe,midi);
+      DotWave.Collision.validatePair(pair,context.sampleRate);
+      while(this.patchVoices.size>=8)this.releasePatch(this.patchVoices.keys().next().value,true);
+      const output=context.createGain(),envelope=context.createGain();
+      output.gain.value=10**(DotWave.Patch.safeLevel(level,pair)/20)*(recipe.patch.inverted?-1:1);output.connect(this.master);
+      voice={key,midi,context,output,envelope,fx:null,dual:null,timer:null,cleanupTimer:null,tail:DotWave.FX.tail(recipe.patch.project.effects)};
+      voice.fx=DotWave.FX.create(context,recipe.patch.project.effects,output);envelope.connect(voice.fx.input);
+      const at=context.currentTime+.005;envelope.gain.setValueAtTime(0,at);envelope.gain.linearRampToValueAtTime(1,at+.012);
+      voice.dual=DotWave.Collision.create(context,recipe.patch.project,pair,envelope,{at});
+      this.patchPending.delete(key);this.patchVoices.set(key,voice);
+      voice.timer=setTimeout(()=>this.releasePatch(key),key==='woof-wander'?61000:15000);
+      this.changed();return voice;
+    } catch(error) {
+      this.patchPending.delete(key);if(voice){voice.dual?.stop();voice.dual?.disconnect();voice.fx?.dispose();voice.output.disconnect();voice.envelope.disconnect();}throw error;
+    }
+  }
+  releasePatch(key,immediate=false) {
+    this.patchPending.delete(key);const voice=this.patchVoices.get(key);if(!voice)return;
+    this.patchVoices.delete(key);clearTimeout(voice.timer);
+    const clean=()=>{clearTimeout(voice.cleanupTimer);voice.dual.disconnect();voice.fx.dispose();voice.envelope.disconnect();voice.output.disconnect();this.patchTails.delete(voice);};
+    voice.clean=clean;
+    if(immediate){voice.dual.stop();clean();}
+    else{const at=voice.context.currentTime;voice.envelope.gain.cancelScheduledValues(at);voice.envelope.gain.setTargetAtTime(0,at,.025);voice.dual.stop(at+.15);this.patchTails.add(voice);voice.cleanupTimer=setTimeout(clean,(.17+voice.tail)*1000);while(this.patchTails.size>16)this.patchTails.values().next().value.clean();}
+    this.changed();
+  }
+  stopPatches() {
+    this.patchPending.clear();for(const key of [...this.patchVoices.keys()])this.releasePatch(key,true);
+    for(const tail of [...this.patchTails])tail.clean();
   }
   setVolume(value) { this.volume = value; if (this.master) this.master.gain.setTargetAtTime(value, this.context.currentTime, .02); }
   setEQ(index, value) { this.eqGains[index] = value; if (this.filters) this.filters[index].gain.setTargetAtTime(value, this.context.currentTime, .02); }

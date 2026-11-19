@@ -1,4 +1,4 @@
-# Dot Wave Studio 2.5.1 source
+# Dot Wave Studio 2.6.0 source
 
 No package installation is required. Use Node.js 24 or a compatible current Node release.
 
@@ -46,6 +46,10 @@ The Wave Shaper 2.5 view uses a single active canvas, A/B source tabs and Point/
 
 `shaping.js` adds exact single-point edits, protected strength blending, drawing snap, constrained group movement, anchored arc bends and mirror operations. Drag strokes keep an unmodified baseline and a raw stroke separately so strength is applied once, independently of pointer-event density. Move uses pointer displacement, avoids jumps on pointer-down, honors pins and constrains the group before any dot clips. Keyboard nudges that cannot move a pinned point do not add an Undo entry.
 
-The current 64 automated checks include the actual keyboard controller, pin save/open and audio equivalence, exact editing locality, constrained group movement, strength, snap and seam-crossing bends. Browser checks separately exercise downloaded project contents, an actual 25-percent snapped drawing stroke, copy/pitch preservation, zoom, previews and a 390-pixel responsive layout. Actual touch hardware and physical speaker/microphone quality are outside these checks.
+The earlier 64 automated checks include the actual keyboard controller, pin save/open and audio equivalence, exact editing locality, constrained group movement, strength, snap and seam-crossing bends. Browser checks separately exercise downloaded project contents, an actual 25-percent snapped drawing stroke, copy/pitch preservation, zoom, previews and a 390-pixel responsive layout. Actual touch hardware and physical speaker/microphone quality are outside these checks.
 
 Version 2.5.1 coalesces repeated waveform arrow-key events using the current Undo entry and explicit selection as the gesture identity. Key release, pointer input, blur, selection changes and other edits reset that identity. Exact-entry validation catches errors before changing the project; no-op entries and zeroing leave history alone. Waveform Undo/Redo restores graph focus. The four new regression cases use the actual controller, commit and history functions.
+
+WOOFpad 2.6 uses `dsp/patch-tone.js` for original phone pairs, range limits, interval-preserving transposition, recipe/history validation, patch note rendering and the cancellable wandering controller. `woof-ui.js` owns the visible panel, held keyboard, discovery history and original-file import. `woof.css` supplies its layout. The 82 checks include 18 new cases for recipes, real pair spectra, melody/export round trips, browser timer receiver binding, native audio controller cancellation and bounded polyphony.
+
+A kept waveform may contain optional `patchTone` metadata. Existing wave data without it keeps its original rendering. The library retains, validates and collision-safely imports recipes; SongDSP uses the same collision preparation and mixing for their pitched notes. Patch previews render the original pair, not the repeating graph thumbnail. Live patch keys use the existing master/effects path and retain background playback. History is local under the original WOOF key and does not enter projects. Classic export explicitly rejects patch recipes instead of dropping them.
