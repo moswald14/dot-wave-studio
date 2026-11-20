@@ -60,6 +60,14 @@ class DotAudio {
       this.worker.postMessage({id, project, scope, options});
     });
   }
+  analyseTake(samples,rate) {
+    this.makeWorker();
+    if(!this.worker)return new Promise((resolve,reject)=>setTimeout(()=>{try{resolve(DotWave.Capture.analyse(samples,rate));}catch(error){reject(error);}},15));
+    return new Promise((resolve,reject)=>{
+      const id=++this.serial,timer=setTimeout(()=>{this.jobs.delete(id);reject(new Error('The take is taking too long to analyse. Try a shorter phrase.'));},90000);
+      this.jobs.set(id,{resolve,reject,timer});this.worker.postMessage({id,operation:'capture',samples,rate});
+    });
+  }
   position() {
     if (!this.playing || !this.context) return this.positionWhenStopped;
     const elapsed = Math.max(0, this.context.currentTime - this.origin);

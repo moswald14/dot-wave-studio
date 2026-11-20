@@ -10,7 +10,7 @@ Help the user make music in their existing studio. Deliver editable music as wel
 - Online studio: https://moswald14.github.io/dot-wave-studio/
 - Original Classic labs: https://moswald14.github.io/dot-wave-studio/Dot-Wave-Classic.html
 - Source: https://github.com/moswald14/dot-wave-studio
-- Core flow: **Sound → Beat → Melody → Arrange → Export**. The user can enter at any step.
+- Core flow: **Capture → Patch → Beat → Melody / Vocals → Arrange → Export**. The user can enter at any step.
 
 ## Choose the working surface
 
@@ -20,7 +20,7 @@ Use the connected browser's supported UI tools for visible work. Use the local J
 
 Read [music-projects.md](references/music-projects.md) when composing through the core API or editing Studio files. Read [development.md](references/development.md) for requested program changes or publication.
 
-Use Studio 2 for the guided workflow, saved patch recipes and singing. Use the actual Classic page for its specialized tools: Hum → Melody, karaoke, waveform snipping, Mushroom Garden, name tones and wave pictures, beat loop programs, richer harmony tools, browser speech, room tuning, controller assignments and ROM/SoundFont sampling. Read [classic-labs.md](references/classic-labs.md) for the relevant workflow and what it produces. These are available through Classic; do not imply they were all added to Studio 2.
+Use Studio 2 for the guided workflow, saved patch recipes and singing. Use Sound → Capture / hum in Studio 2 for reviewed takes, editable single-voice melody extraction and cycle-to-patch shaping. Use the actual Classic page for its specialized tools: synchronized karaoke, manual waveform snipping, Mushroom Garden, name tones and wave pictures, beat loop programs, richer harmony tools, browser speech, room tuning, controller assignments and ROM/SoundFont sampling. Read [classic-labs.md](references/classic-labs.md) for the relevant workflow and what it produces. These are available through Classic; do not imply they were all added to Studio 2.
 
 Read [legacy-files.md](references/legacy-files.md) for old saves, sound recovery, switchboards or moving work between editions. Preserve the full original before converting. New singing, recorded instruments and complete patch tones cannot be exported to Classic as editable projects; keep both editions' source files and use a suitable audio or note handoff.
 
@@ -44,6 +44,12 @@ node <skill>/scripts/classic.cjs preview-patch <patch-or-switchboard.json> --rep
 ```
 
 Recovery merges matching sounds, retains effects and full patch recipes, and renames conflicting IDs. It extracts the sound libraries only; it does not replace the source songs or recover a raw mic take from a repeating waveform. Previewing produces a finite three-second WAV of the actual patch pair.
+
+## Capture and hum
+
+Studio 2.8 adds **Sound → Capture / hum**. Record or import a WAV up to 30 seconds, review its original three-second preview, then choose one of three independent handoffs: editable melody notes, a 32-dot repeating outline for wave A/B, or the original recording as a song audio clip. Tune to nearest notes or the Melody key/scale, retain timing or select a grid, and choose a part and insertion measure. Existing notes stay; overflow rejects the whole insertion. Cycle shaping keeps pitch, smoothness, effects and the other wave. Save the full patch recipe afterward.
+
+The reviewed take is temporary until saved as a WAV or placed in the song. Notes and wave outlines do not retain the original recording. Pitch extraction works for a single clear voice, not chords or lyric transcription. On HTTP Home Assistant, use WAV import or the existing trusted HTTPS address. Cancel, Stop or leaving Capture releases the microphone and invalidates pending work. Keeper uses the same editor with a Telephone handoff; shared-match scores keep their existing private sample restrictions.
 
 ## Sound and patch tones
 

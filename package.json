@@ -1,12 +1,12 @@
 {
   "name": "dot-wave-studio",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "private": true,
   "description": "Offline guided music studio with waveform sculpting, sampled instruments and editable arrangements.",
   "scripts": {
     "build": "node build.cjs",
     "build:pages": "node build-pages.cjs",
-    "test": "node verify.cjs",
+    "test": "node verify.cjs && node capture-verify.cjs && node capture-controller-verify.cjs",
     "check:release": "node check-release.cjs",
     "check:pages": "node pages-verify.cjs",
     "start": "node serve.cjs"

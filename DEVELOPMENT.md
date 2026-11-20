@@ -1,9 +1,9 @@
-# Dot Wave Studio 2.6.0 source
+# Dot Wave Studio 2.8.0 source
 
 No package installation is required. Use Node.js 24 or a compatible current Node release.
 
 ```
-node verify.cjs
+npm test
 node build.cjs
 node serve.cjs
 ```
@@ -67,3 +67,7 @@ Notes may contain optional `vocal` metadata (`lyric`, `phones`, `vibrato`, `brea
 The nine added vocal checks exercise pronunciation, unknown-word and count failures, melismas, parameter validation, pitch, all 39 phones at sample-rate boundaries, recorded fallback, persistence, independent placements, audio-cache separation and MIDI lyrics. Browser checks separately exercise live word changes, expression Undo, recovery, independent clip edits and actual WAV/MIDI downloads. A browser-rendered 20-second sung song matched the Node WAV byte for byte. Physical speakers, microphones and touch devices were not tested for this release.
 
 `skills/dot-wave-studio/` is a standalone Codex skill. Its instructions route browser and core-API work, preserve user sessions and identify the actual source checkout. The helper is read-only except for an explicitly requested new WAV path; it validates with the real core, refuses existing outputs and performs no network actions. Its inspection, round trip, real render and overwrite refusal were run against the synthetic Singing Drift example.
+
+`capture-tools.js` shares single-voice pitch analysis between the browser and worker. Original Hum DSP supplies stable pitch frames and cycle extraction; HumPhrase supplies median-filtered phrase conversion. Insertions validate a complete cloned project before commit. `capture-ui.js` owns temporary reviewed takes and microphone/analysis generation tokens; stale device permission, decode and worker responses cannot replace newer takes. The original PCM stays separate from derived notes and outlines. Six capture integration checks and five controller lifecycle checks accompany the original 91 checks.
+
+`python package-release.py --out <new.zip>` creates a deterministic offline download using an explicit source allowlist, complete source, Classic, credits, examples and the reusable skill. Every entry is hashed and read back after packaging. Existing outputs are refused.

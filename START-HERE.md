@@ -1,4 +1,11 @@
-# Dot Wave Studio 2.7.0
+# Studio 2.8 · your making path
+
+**Capture → Patch → Beat → Melody / Vocals → Arrange → Export.** Start anywhere and come back when an idea needs another tool. The path above each workspace shows what is actually in your session.
+
+In **Sound → Capture / hum**, record or open a WAV up to 30 seconds. Review it, then choose notes, a repeating outline for wave A/B, or the original audio in the song. [Capture guide](Capture-guide.md)
+
+WOOFpad remains beside Patch tones: wander, catch, play, keep the full two-voice recipe. Each saved sound has a three-second preview. Build a beat, draw or hum a melody, choose a singing voice and give notes words, then place independent patterns in Arrange. Save the editable project along with your WAV or MIDI.
+
 
 **Open `Dot-Wave-Studio-2.7.0.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
 

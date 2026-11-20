@@ -10,7 +10,7 @@
   const STORE = 'dot-wave-v2-draft', MASTER = 'dot-wave-v2-master', LIBRARY = 'dot-wave-v2-library';
   let p = C.blank(), undo = [], redo = [], savedVersion = null, revision = 0, fileMode = 'project', fileTicket = 0;
   let saveTimer, toastTimer, gesture = null, lastExportAudio = null;
-  let waveNudgeKey=null,woof=null,vocals=null;
+  let waveNudgeKey=null,woof=null,vocals=null,capture=null;
   const ui = {step:'sound', part:'melody', sound:'stock-sine', drum:0, beatBar:0, grid:.25, length:.5, velocity:.65,
     noteMode:'draw', selected:[], cursor:0, zoom:1, songZoom:1, songFit:true,follow:true,showMixer:false,solo:[],section:null,clip:null, editTarget:null, pattern:null,
     noteBase:48, recover:null, recovered:false, busy:false, exportScope:'song', exportRate:44100, noteCursor:0,
@@ -20,6 +20,7 @@
   try { audio.volume = num(localStorage.getItem(MASTER) ?? 45, 0, 100) / 100; } catch {}
   woof=WoofPanel({C,audio,ui,getProject:()=>p,commit,changed,render,setStep,chooseFile,download,notify,announce,keep:keepPatchTone});
   vocals=VocalsPanel({C,audio,ui,getProject:()=>p,commit,render,setStep,notify,announce});
+  capture=CapturePanel({C,audio,ui,getProject:()=>p,replaceProject:value=>{p=value;},commit,render,setStep,chooseFile,download,notify,addAudio,prepare:()=>{woof.stop();cancelVoiceCapture();audio.stop();}});
   function keepPatchTone(go=false){const title=$('sound-name')?.value||ui.soundName;let kept;commit(()=>{kept=C.savePatchTone(p,title,woof.state.rootMode);ui.sound=kept.id;p.melody.tracks.find(t=>t.id===ui.part).instrument=kept.id;},'Patch tone kept with its two editable voices. Ready for your melody.');if(go&&kept)setStep('melody');}
   function notify(text, error = false) {
     $('status').textContent = text; $('status').classList.toggle('busy', error);
@@ -40,8 +41,8 @@
   function commit(fn, text, paint = true) {
     resetWaveNudge();if(typeof woof!=='undefined'&&woof)woof.state.grouped=false;
     const before = checkpoint();
-    try { fn(); undo.push(before); trimHistory(); redo = []; changed(text, paint); }
-    catch (error) { p = before.project; ui.clip = before.clip; render(); notify(error.message, true); }
+    try { fn(); undo.push(before); trimHistory(); redo = []; changed(text, paint); return true; }
+    catch (error) { p = before.project; ui.clip = before.clip; render(); notify(error.message, true); return false; }
   }
   function history(direction) {
     if(typeof woof!=='undefined')woof?.stop();resetWaveNudge();const focusedWave=document.activeElement?.dataset?.wave;
@@ -67,7 +68,7 @@
     return project;
   }
   function setStep(step) {
-    if (!steps.includes(step)) return;if(step!=='sound'){cancelVoiceCapture();woof?.stop();} ui.step = step; ui.selected = [];
+    if (!steps.includes(step)) return;if(step!=='sound'){capture?.cancel();cancelVoiceCapture();woof?.stop();} ui.step = step; ui.selected = [];
     document.documentElement.style.setProperty('--accent', colors[step]);
     if (location.hash !== '#' + step) window.history.replaceState(null, '', '#' + step);
     render();
@@ -87,6 +88,11 @@
       melody:`${p.melody.tracks.reduce((s,t) => s+t.notes.length,0)} notes · ${p.melody.bars} measures`, arrange:`${p.song.bars} measures · ${p.song.tracks.length} tracks`, export:'WAV · MIDI · project'};
     $('workflow').innerHTML = '<span class="nav-title">MAKE SOMETHING YOURS</span>' + steps.map((step, i) => `<button data-action="step" data-step="${step}" class="${ui.step === step ? 'active' : ''}" ${ui.step === step ? 'aria-current="step"' : ''}><span class="step-number">0${i+1}</span><span><span class="step-label">${titles[step]}</span><span class="step-detail">${esc(details[step])}</span></span></button>${i<4?'<span class="trail">·</span>':''}`).join('') +
       '<div class="nav-bottom"><button data-action="starter"><span class="nav-star">✦</span> Try a starter</button><button data-action="classic"><span>▦</span> More studio tools</button><button data-action="help"><span>?</span> A little guidance</button><p>Small ideas become<br>whole songs.<br>One step at a time.</p></div>';
+  }
+  function sessionPath(){
+    const tones=p.library.filter(w=>w.patchTone).length,notes=p.melody.tracks.reduce((n,t)=>n+t.notes.length,0),placed=p.song.tracks.reduce((n,t)=>n+(t.phrases?.length||0)+(t.notes.length?1:0),0)+p.song.clips.length+p.song.audio.length,hits=p.beat.pattern.tracks.reduce((n,t)=>n+t.steps.filter(v=>v>0).length,0);
+    const cue={sound:['Catch a voice, shape two waves, or wander with WOOFpad. Keep the whole patch before giving it notes.','sound-mode','Capture / hum','capture'],beat:[hits?'Your heartbeat is here. Keep the beat, then give your sound a phrase.':'Place a few hits. Leave room for your patch tone to breathe.','step','Melody & vocals','melody'],melody:[notes?'Your notes stay editable. Keep a pattern or place the parts in your song below.':'Choose a patch, draw a phrase, or hum one in Capture. Put words on a singing part.','step','Arrange the song','arrange'],arrange:[placed?'Give the song a beginning, a change and a return. Each pattern placement can be edited on its own.':'Place a beat or a melody from your pattern box. The timeline holds your independent copies.','step','Hear & export','export'],export:['Save the editable project beside your WAV. MIDI keeps notes and timed lyrics.','save','Save editable project','']}[ui.step];
+    return '<aside class="session-path" aria-label="Your making path"><div><span class="caption">CAPTURE → PATCH → BEAT → MELODY / VOCALS → ARRANGE → EXPORT</span><p>'+cue[0]+'</p><p class="path-counts">'+tones+' patch tones · '+hits+' beat hits · '+notes+' phrase notes · '+placed+' song items</p></div><button data-action="'+cue[1]+'" '+(cue[1]==='sound-mode'?'data-mode="': 'data-step="')+cue[3]+'">'+cue[2]+' →</button></aside>';
   }
   const waveDecor = '<svg class="decor-wave" viewBox="0 0 120 42" fill="none" aria-hidden="true"><path d="M0 21h15l4-8 6 18 6-28 6 37 6-28 6 18 6-9h10l5-12 6 24 6-30 6 35 6-26 6 16 6-7h14" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/></svg>';
   function heading(index, title, description) { return `<div class="stage-heading"><div><span class="eyebrow">0${index} / ${titles[steps[index-1]].toUpperCase()}</span><h1>${title}</h1><p>${description}</p></div>${waveDecor}</div>`; }
@@ -124,7 +130,7 @@
   function patternShelf() {
     return `<section class="panel shelf"><div class="shelf-head"><h2>YOUR PATTERN BOX <span class="mini-badge">${p.patterns.length+p.beatShelf.length}</span></h2><div><button class="quiet" data-action="import-pattern">Import</button><button class="quiet" data-action="export-pattern">Export selected</button><button class="quiet danger" data-action="remove-pattern">Remove</button></div></div><div class="shelf-tiles">${p.patterns.map(item => `<button draggable="true" class="pattern-tile ${ui.pattern===item.id?'selected':''}" data-action="pick-pattern" data-id="${esc(item.id)}" data-kind="pattern"><span class="pattern-icon">▂ ▆ ▃ ▅</span><strong>${esc(item.name)}</strong><small>${item.duration/4} measures · ${item.notes.length} notes</small></button>`).join('')}${p.beatShelf.map(item => `<button draggable="true" class="pattern-tile beat" data-action="pick-pattern" data-id="${esc(item.id)}" data-kind="beat"><span class="pattern-icon">▪ · ▪ · ▪ ▪ · ▪</span><strong>${esc(item.name)}</strong><small>${item.pattern.bars} measures · BEAT</small></button>`).join('')}${!p.patterns.length&&!p.beatShelf.length?'<p class="empty-shelf">Keep a beat or melody, then drag it into your song.</p>':''}</div></section>`;
   }
-  function soundModeTabs(){return `<div class="sound-mode-tabs" aria-label="Choose a sound source">${[['wave','Patch tones'],['woof','🐾 WOOFpad'],['vocals','Vocals'],['real','Recorded instruments'],['voice','Capture your voice']].map(([mode,label])=>`<button data-action="sound-mode" data-mode="${mode}" aria-pressed="${ui.soundMode===mode}" class="${ui.soundMode===mode?'active':''}">${label}</button>`).join('')}</div>`;}
+  function soundModeTabs(){return `<div class="sound-mode-tabs" aria-label="Choose a sound source">${[['capture','Capture / hum'],['wave','Patch tones'],['woof','🐾 WOOFpad'],['vocals','Vocals'],['real','Recorded instruments'],['voice','Capture your voice']].map(([mode,label])=>`<button data-action="sound-mode" data-mode="${mode}" aria-pressed="${ui.soundMode===mode}" class="${ui.soundMode===mode?'active':''}">${label}</button>`).join('')}</div>`;}
   function instrumentPreviewButton(id,name){return `<button class="mini-play" data-action="preview-instrument" data-id="instrument-${esc(id)}" data-instrument="${esc(id)}" data-name="${esc(name)}" aria-label="Play ${esc(name)} for 3 seconds" aria-pressed="false"><span class="mini-icon">▶</span><span class="mini-time">3s</span><span class="mini-pitch">Recorded</span></button>`;}
   function recordedInstrumentsView(){return heading(1,'Play something real.','Recorded attacks, resonances, and decays. Ready offline, ready for your notes.')+soundModeTabs()+`<section class="panel"><div class="panel-head"><h2>THE INSTRUMENT ROOM</h2><span class="chip">10 instruments · 39 recordings</span></div><div class="instrument-room">${C.Sample.catalog().map(item=>`<article class="instrument-card"><div class="instrument-glyph" aria-hidden="true">${({0:'♬',24:'♯',33:'♭',40:'∿',42:'∿',73:'♩',56:'♪',66:'♫',46:'♮',13:'▥'})[item.program]||'♬'}</div><h3>${esc(item.name)}</h3><p>${item.sampleCount} recorded pitches · ${item.sustain?'held notes':'natural decay'}</p>${instrumentPreviewButton(item.id,item.name)}<button class="secondary" data-action="use-instrument" data-instrument="${item.id}">Use in melody →</button></article>`).join('')}</div><div class="sample-credit">Recordings from <a href="https://github.com/nbrosowsky/tonejs-instruments" target="_blank" rel="noopener">tonejs-instruments</a> · CC BY 3.0. Credits and source details are included in the download.</div></section>`+next('melody','Paint a melody','Pick a recorded instrument, then play or draw your notes.');}
   function voiceCaptureView(){
@@ -178,6 +184,7 @@
     return `<aside class="precision-inspector">${tabs}<div class="precision-inspector-body">${body}</div></aside>`;
   }
   function soundView() {
+    if(ui.soundMode==='capture')return heading(1,'A little sound can go anywhere.','Capture → shape a patch → beat → melody & vocals → arrange → export.')+soundModeTabs()+capture.view();
     if(ui.soundMode==='vocals')return heading(1,'Give the song a voice.','Words, held vowels, and little harmonies. Your notes can sing.')+soundModeTabs()+vocals.view();
     if(ui.soundMode==='real')return recordedInstrumentsView();if(ui.soundMode==='voice')return voiceCaptureView();if(ui.soundMode==='woof')return heading(1,'Wander into a good tone.','Two waves, a little mischief, and a patch worth keeping.')+soundModeTabs()+woof.view()+soundShelf();
     const s=ui.shaper,side=s.side,patch=p.patch.project,voice=patch[side],tools=[['draw','Draw'],['grab','Move'],['select','Select'],['peak','Peak'],['trough','Trough'],['edge','Zero edge']];
@@ -294,13 +301,14 @@
     if($('project-name')!==document.activeElement) $('project-name').value=p.song.name;
     renderNav(); renderTransport();
     let html=({sound:soundView,beat:beatView,melody:melodyView,arrange:arrangementView,export:exportView})[ui.step]();
+    html=sessionPath()+html;
     if(ui.recover&&!ui.recovered) html=`<div class="recovery-banner"><span>A previous studio draft is here when you need it.</span><button data-action="recover">Recover draft</button><button class="quiet" data-action="dismiss-recover">Keep starting fresh</button></div>`+html;
     $('workspace').innerHTML=html;
     renderedStep = ui.step;
     const nextScroll = $('piano-scroll') || $('timeline-scroll') || $('shape-plot-scroll'), savedScroll = scrollMemory.get(ui.step);
     if (nextScroll && savedScroll) { nextScroll.scrollLeft = savedScroll[0]; nextScroll.scrollTop = savedScroll[1]; }
     if(ui.step==='arrange')fitTimeline();
-    if(ui.step==='sound'&&ui.soundMode==='wave')paintWaves();if(ui.step==='sound'&&ui.soundMode==='voice')paintVoiceTake(); if(ui.step==='export'&&lastExportAudio) paintExport(lastExportAudio);renderMiniPlayers();
+    if(ui.step==='sound'&&ui.soundMode==='wave')paintWaves();if(ui.step==='sound'&&ui.soundMode==='voice')paintVoiceTake(); if(ui.step==='export'&&lastExportAudio) paintExport(lastExportAudio);if(ui.step==='sound'&&ui.soundMode==='capture')capture.paint();renderMiniPlayers();
   }
   function drawCanvas(canvas, table, color, dots=false, side=null) {
     if(!canvas) return;
@@ -407,9 +415,9 @@
   }
 
   const actions={
-    step:b=>setStep(b.dataset.step), play:()=>togglePlay(), stop:()=>{woof.stop();audio.stop();cancelVoiceCapture();render();announce('All sound stopped. Your work is here.');},
+    step:b=>setStep(b.dataset.step), play:()=>togglePlay(), stop:()=>{capture.cancel();woof.stop();audio.stop();cancelVoiceCapture();cancelRecording();render();announce('All sound stopped. Your work is here.');},
     'song-play':()=>{woof.stop();return audio.playing&&audio.scope==='song'?audio.stop():audio.play(p,'song',ui.cursor,{soloIds:ui.solo});},
-    'sound-mode':b=>{woof.stop();cancelVoiceCapture();ui.soundMode=b.dataset.mode;render();},
+    'sound-mode':b=>{capture.cancel();woof.stop();cancelVoiceCapture();ui.soundMode=b.dataset.mode;render();},
     'preview-instrument':b=>previewInstrument(b),
     'use-instrument':b=>{commit(()=>p.melody.tracks.find(t=>t.id===ui.part).instrument=b.dataset.instrument,'Recorded instrument assigned to this melody part.');setStep('melody');},
     'voice-phone':b=>{cancelVoiceCapture();ui.phone=b.dataset.code;ui.voiceNotice='';render();},
@@ -424,12 +432,12 @@
     'voice-add-phrase':()=>{const captured=phraseAudio();addAudio(captured,p.voiceBank.name+' phrase');setStep('arrange');},
     'voice-export-phrase':()=>{const captured=phraseAudio();download(C.IO.encodeWav(captured.samples,captured.rate),'audio/wav','voice-phrase.wav');},
     undo:()=>history('undo'),redo:()=>history('redo'),open:()=>chooseFile('project'),save:()=>saveProject(),
-    new:()=>newDialog(),starter:()=>{audio.stop();commit(()=>{p=shareSounds(C.starter());ui.solo=[];ui.section=null;ui.clip=null;ui.editTarget=null;ui.selected=[];ui.cursor=0;ui.noteBase=48;ui.beatBar=0;ui.recovered=true;},'Windowlight is ready. Every note and placement is yours to edit.');setStep('arrange');$('modal').close();},
-    recover:()=>{const data=shareSounds(C.open(JSON.parse(ui.recover)));audio.stop();commit(()=>{p=data;ui.solo=[];ui.section=null;ui.recovered=true;ui.selected=[];ui.clip=null;ui.cursor=0;},'Your previous draft is back. Save a project file to keep it.');},
+    new:()=>newDialog(),starter:()=>{audio.stop();capture.cancel();commit(()=>{p=shareSounds(C.starter());ui.solo=[];ui.section=null;ui.clip=null;ui.editTarget=null;ui.selected=[];ui.cursor=0;ui.noteBase=48;ui.beatBar=0;ui.recovered=true;},'Windowlight is ready. Every note and placement is yours to edit.');setStep('arrange');$('modal').close();},
+    recover:()=>{const data=shareSounds(C.open(JSON.parse(ui.recover)));audio.stop();capture.cancel();commit(()=>{p=data;ui.solo=[];ui.section=null;ui.recovered=true;ui.selected=[];ui.clip=null;ui.cursor=0;},'Your previous draft is back. Save a project file to keep it.');},
     'dismiss-recover':()=>{ui.recovered=true;ui.recover=null;render();},
     help:()=>helpDialog(),listen:()=>listenDialog(),classic:()=>classicDialog(),
     'close-modal':()=>$('modal').close(),
-    'confirm-new':()=>{audio.stop();commit(()=>{p=shareSounds(C.blank());ui.solo=[];ui.section=null;Object.assign(ui,{selected:[],clip:null,editTarget:null,cursor:0,beatBar:0,recovered:true});},'A fresh page. Previous work is one Undo away.');$('modal').close();setStep('sound');},
+    'confirm-new':()=>{audio.stop();capture.cancel();commit(()=>{p=shareSounds(C.blank());ui.solo=[];ui.section=null;Object.assign(ui,{selected:[],clip:null,editTarget:null,cursor:0,beatBar:0,recovered:true});},'A fresh page. Previous work is one Undo away.');$('modal').close();setStep('sound');},
     'random-wave':b=>commit(()=>{setShapePoints(b.dataset.side,C.S.smoothPoints(Array.from({length:32},()=>Math.random()*2-1)));},'A new shape to play with.'),
     'clear-wave':b=>commit(()=>{setShapePoints(b.dataset.side,Array(32).fill(0));},'Wave cleared. Draw a new one.'),
     'remove-effect':b=>commit(()=>p.patch.project.effects.splice(+b.dataset.index,1),'Effect removed.'),
@@ -574,7 +582,7 @@
       ui.clip={...ui.editTarget};
     },'This song placement now has your edited notes. Other copies kept their notes.');
   }
-  function chooseFile(mode) { fileMode=mode;$('file-input').accept=mode==='midi'?'.mid,.midi':['audio','voice-take'].includes(mode)?'.wav':'.json';$('file-input').value='';$('file-input').click(); }
+  function chooseFile(mode) { fileMode=mode;$('file-input').accept=mode==='midi'?'.mid,.midi':['audio','voice-take','capture'].includes(mode)?'.wav':'.json';$('file-input').value='';$('file-input').click(); }
   function filename() { return p.song.name.replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-|-$/g,'').slice(0,45)||'Dot-Wave'; }
   function download(data,type,suffix) {
     const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -584,11 +592,12 @@
   async function readFile(file,mode) {
     C.assert(file.size<45*1024*1024,'Choose a file under 45 MB.');const ticket=++fileTicket;
     const buffer=await file.arrayBuffer();if(ticket!==fileTicket)return;
+    if(mode==='capture'){const decoded=C.IO.decodeWav(buffer);await capture.accept(decoded,file.name);return;}
     if(mode==='patch-tone'){woof.read(JSON.parse(new TextDecoder().decode(buffer)));return;}
     if(mode==='voice-take'){const code=ui.phone,decoded=C.IO.decodeWav(buffer);ui.voicePending[code]=C.Voice.analyse(decoded.samples,decoded.rate,code);ui.voiceNotice='Imported '+code+'. Listen before keeping it.';render();return;}
     if(mode==='voice-bank'){const bank=C.Voice.validate(JSON.parse(new TextDecoder().decode(buffer)));C.assert(p.melody.tracks.concat(p.song.tracks).filter(t=>t.instrument.startsWith('voice-')).every(t=>bank.takes[t.instrument.slice(6)]),'This bank is missing a speech sound used in your notes. Open it in a fresh project, or record those sounds first.');commit(()=>p.voiceBank=bank,'Voice bank opened with its recorded sounds.');ui.voicePending={};ui.soundMode='voice';setStep('sound');return;}
     if(mode==='project'){
-      woof.stop();const value=shareSounds(C.open(JSON.parse(new TextDecoder().decode(buffer))));audio.stop();commit(()=>{p=value;ui.solo=[];ui.section=null;ui.selected=[];ui.clip=null;ui.editTarget=null;ui.cursor=0;ui.beatBar=0;ui.recovered=true;},'Project opened with its sounds and editable music. Playback is stopped.');setStep('arrange');return;
+      capture.cancel();woof.stop();const value=shareSounds(C.open(JSON.parse(new TextDecoder().decode(buffer))));audio.stop();commit(()=>{p=value;ui.solo=[];ui.section=null;ui.selected=[];ui.clip=null;ui.editTarget=null;ui.cursor=0;ui.beatBar=0;ui.recovered=true;},'Project opened with its sounds and editable music. Playback is stopped.');setStep('arrange');return;
     }
     if(mode==='midi') { const midi=C.IO.decode(buffer);commit(()=>{
       const tracks=midi.tracks.filter(t=>t.notes.length);C.assert(tracks.length,'This MIDI file has no notes.');C.assert(p.song.tracks.length+tracks.length<=8,'This import would exceed eight note tracks.');
@@ -602,9 +611,9 @@
     },'Editable pattern added to your box.');}
   }
   function addAudio(decoded,title) {
-    commit(()=>{C.assert(p.song.audio.length<8,'Keep up to eight recordings.');C.assert(decoded.duration+p.song.audio.reduce((s,c)=>s+c.samples.length/c.rate,0)<=60.0001,'Keep imported recordings under one minute in total.');
+    const kept=commit(()=>{C.assert(p.song.audio.length<8,'Keep up to eight recordings.');C.assert(decoded.duration+p.song.audio.reduce((s,c)=>s+c.samples.length/c.rate,0)<=60.0001,'Keep imported recordings under one minute in total.');
       const clip={id:C.id('audio'),name:title.slice(0,64),start:ui.cursor,volume:.7,pan:0,pitch:0,mute:false,rate:decoded.rate,samples:decoded.samples};p.song.audio.push(clip);C.extend(p,ui.cursor+decoded.duration*p.song.bpm/60);ui.clip={type:'audio',id:clip.id};
-    },'Recording added to your song. Stereo files are mixed to mono; their original speed is kept.');setStep('arrange');
+    },'Recording added to your song. Stereo files are mixed to mono; their original speed is kept.');if(kept)setStep('arrange');return kept;
   }
   function exportPattern() {
     const pattern=p.patterns.find(x=>x.id===ui.pattern);C.assert(pattern,'Choose a melody pattern first.');
@@ -638,9 +647,9 @@
     if(!$('modal').open)$('modal').showModal();
   }
   function newDialog(){showModal('A fresh little idea.','<p>Your current session will be one Undo away. Save a project file first if you want to keep a separate copy.</p>','<button class="quiet" data-action="close-modal">Keep working</button><button class="secondary" data-action="save">Save project</button><button class="primary" data-action="confirm-new">Start fresh</button>');}
-  function helpDialog(){showModal('A little guidance.',`<p><b>Sound → Beat → Melody → Arrange → Export.</b> Start anywhere, come back whenever. Switching steps keeps the music playing.</p><ul><li><b>Sound:</b> tune two patch voices, play the patch keyboard, and shape A/B. WOOFpad wanders through collisions, keeps discoveries and offers phone-tone seeds. Catch a tone and Keep patch tone to retain its editable recipe. <b>Vocals</b> offers three built-in singing characters and your recorded voice kit. Choose one, paint notes and put words on them in Melody.</li><li><b>Beat:</b> click a step for a hit. Shift-click makes a soft hit. Keep it in your box.</li><li><b>Melody:</b> paint notes. Drag the body to move, the right edge to resize. Shift-click groups notes; Select draws a selection box.</li><li><b>Arrange:</b> drag a saved pattern onto the timeline. Drag clips to move them; pull a melody clip’s edge to repeat it. Edit a clip, then Update this song clip. Sung lyrics stay attached to their notes; use _ to carry a vowel.</li><li><b>Export:</b> WAV is the sound; MIDI is the notes; project files keep everything editable.</li></ul><div class="shortcut"><span>Play / pause</span><code>Space</code></div><div class="shortcut"><span>Stop every sound</span><code>Escape</code></div><div class="shortcut"><span>Undo / Redo</span><code>Ctrl Z / Ctrl Shift Z</code></div><div class="shortcut"><span>Save / Open project</span><code>Ctrl S / Ctrl O</code></div><div class="shortcut"><span>Move selected notes / change length</span><code>Arrows / Shift + ← →</code></div><div class="shortcut"><span>Duplicate selected notes or clip</span><code>Ctrl D</code></div><p style="margin-top:15px">The studio starts quietly. Keep device volume comfortable. The digital output guard limits peaks; your speakers still control how loud the room is.</p>`,'<button class="secondary" data-action="starter">✦ Try a starter</button><button class="primary" data-action="close-modal">Back to studio</button>');}
+  function helpDialog(){showModal('A little guidance.',`<p><b>Capture → Shape a patch → Beat → Melody / Vocals → Arrange → Export.</b> Start anywhere, come back whenever. Switching steps keeps the music playing.</p><ul><li><b>Capture / hum:</b> record or open a WAV up to 30 seconds. Review it, then add its tune as editable notes, send a repeating cycle to wave A/B, or keep the original audio in your song. Nothing changes until you choose. <b>Sound:</b> tune two patch voices, play the patch keyboard, and shape A/B. WOOFpad wanders through collisions, keeps discoveries and offers phone-tone seeds. Catch a tone and Keep patch tone to retain its editable recipe. <b>Vocals</b> offers three built-in singing characters and your recorded voice kit. Choose one, paint notes and put words on them in Melody.</li><li><b>Beat:</b> click a step for a hit. Shift-click makes a soft hit. Keep it in your box.</li><li><b>Melody:</b> paint notes. Drag the body to move, the right edge to resize. Shift-click groups notes; Select draws a selection box.</li><li><b>Arrange:</b> drag a saved pattern onto the timeline. Drag clips to move them; pull a melody clip’s edge to repeat it. Edit a clip, then Update this song clip. Sung lyrics stay attached to their notes; use _ to carry a vowel.</li><li><b>Export:</b> WAV is the sound; MIDI is the notes; project files keep everything editable.</li></ul><div class="shortcut"><span>Play / pause</span><code>Space</code></div><div class="shortcut"><span>Stop every sound</span><code>Escape</code></div><div class="shortcut"><span>Undo / Redo</span><code>Ctrl Z / Ctrl Shift Z</code></div><div class="shortcut"><span>Save / Open project</span><code>Ctrl S / Ctrl O</code></div><div class="shortcut"><span>Move selected notes / change length</span><code>Arrows / Shift + ← →</code></div><div class="shortcut"><span>Duplicate selected notes or clip</span><code>Ctrl D</code></div><p style="margin-top:15px">The studio starts quietly. Keep device volume comfortable. The digital output guard limits peaks; your speakers still control how loud the room is.</p>`,'<button class="secondary" data-action="starter">✦ Try a starter</button><button class="primary" data-action="close-modal">Back to studio</button>');}
   function listenDialog(){showModal('For your ears.',`<p>Listening EQ and Master affect your speakers. Your exported music keeps its own mix.</p><div class="eq-grid">${[32,64,125,250,500,1000,2000,4000,8000,16000].map((hz,i)=>`<label>${hz>=1000?hz/1000+'k':hz} Hz<input type="range" data-eq="${i}" min="-12" max="12" step="1" value="${audio.eqGains[i]}" aria-label="${hz} Hz EQ"><output>${audio.eqGains[i]} dB</output></label>`).join('')}</div><p style="margin-top:15px">Output peaks are guarded at −12 dBFS. This controls digital peaks, not the loudness of your device.</p>`,'<button class="quiet" data-action="eq-reset">Reset EQ</button><button class="primary" data-action="close-modal">Back to studio</button>');}
-  function classicDialog(){showModal('The rest of your studio.',`<p>The five main music tools have a new home here. The specialized tools remain available in the included Classic Studio: room tuning, voiceLAB, ROM sound importing, SNES DJ, YouTube, engine and humming tools, and the landline beta.</p><p>Save a <b>Classic project</b> here, then open it in Classic to keep working with those tools. To return, save its project and open that file in this studio.</p><p><a href="Dot-Wave-Classic.html" target="_blank" rel="noopener">Open Classic Studio ↗</a></p><p class="tiny">The Classic file is included in the download ZIP. The Home Assistant bridge still uses the installed edition.</p>`,'<button class="secondary" data-action="export" data-format="classic">Save Classic project</button><button class="primary" data-action="close-modal">Back to studio</button>');}
+  function classicDialog(){showModal('The rest of your studio.',`<p>The five main music tools have a new home here. The specialized tools remain available in the included Classic Studio: room tuning, voiceLAB, ROM sound importing, SNES DJ, YouTube, live retuning, karaoke and the landline beta. Capture / hum is now built into this studio.</p><p>Save a <b>Classic project</b> here, then open it in Classic to keep working with those tools. To return, save its project and open that file in this studio.</p><p><a href="Dot-Wave-Classic.html" target="_blank" rel="noopener">Open Classic Studio ↗</a></p><p class="tiny">The Classic file is included in the download ZIP. The Home Assistant bridge still uses the installed edition.</p>`,'<button class="secondary" data-action="export" data-format="classic">Save Classic project</button><button class="primary" data-action="close-modal">Back to studio</button>');}
   let recording=null,recordCancel=0;
   function recordDialog(){showModal('Catch a little sound.','<p>Record up to 30 seconds from this browser’s microphone. It becomes an audio clip at your song cursor. Recording starts only when you press Record; nothing is uploaded.</p><p id="record-status">Ready when you are. Use headphones to avoid recording the studio playback.</p>','<button class="quiet" data-action="close-modal">Cancel</button><button id="record-start" class="primary" data-action="start-recording">● Record</button><button id="record-stop" class="secondary" data-action="stop-recording" disabled>■ Keep recording</button>');}
   async function startRecording(){
@@ -814,7 +823,7 @@
     if(event.defaultPrevented)return;
     if(!['ArrowUp','ArrowDown'].includes(event.key))resetWaveNudge();
     const editing=event.target.closest('input,textarea,select,[contenteditable]');const mod=event.ctrlKey||event.metaKey;
-    if(event.key==='Escape'){woof.stop();audio.stop();cancelVoiceCapture();cancelRecording();finishGesture(true);return;}
+    if(event.key==='Escape'){capture.cancel();woof.stop();audio.stop();cancelVoiceCapture();cancelRecording();finishGesture(true);return;}
     if(mod&&event.key.toLowerCase()==='s'){event.preventDefault();saveProject();return;}
     if(mod&&event.key.toLowerCase()==='o'){event.preventDefault();chooseFile('project');return;}
     if(event.key==='Enter'&&event.target.matches('[data-change="shape-height"]')){event.preventDefault();changes['shape-height'](event.target);return;}
@@ -832,7 +841,7 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden){woof.stop();audio.stop();cancelRecording();}});
   window.addEventListener('beforeunload',event=>{if(revision&&savedVersion!==revision){event.preventDefault();event.returnValue='';}});
   window.addEventListener('pagehide',()=>{woof.stop();audio.stop();cancelRecording();});
-  let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(ui.step==='sound')paintWaves();if(ui.step==='export'&&lastExportAudio)paintExport(lastExportAudio);if(ui.step==='arrange')fitTimeline();},150);});
+  let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(ui.step==='sound')paintWaves();if(ui.step==='export'&&lastExportAudio)paintExport(lastExportAudio);if(ui.step==='arrange')fitTimeline();capture.paint();},150);});
   window.addEventListener('hashchange',()=>{const step=location.hash.slice(1);if(steps.includes(step))setStep(step);});
   document.addEventListener('toggle',event=>{const key=event.target.dataset?.shapeDetails;if(key)ui.shaper[key]=event.target.open;},true);
   let lastStep=-1,lastMiniPaint=0;
@@ -851,5 +860,5 @@
   Promise.all([StudioStore.get('draft'),StudioStore.get('voiceBank')]).then(([draft,bank])=>{if(revision!==initialRevision||ui.recovered)return;if(draft)ui.recover=draft;if(bank)p.voiceBank=C.Voice.validate(bank);render();}).catch(()=>{});
   window.addEventListener('pagehide',()=>{cancelVoiceCapture();cancelRecording();});
   // Read-only snapshot helpers for a review or a future studio integration.
-  window.DotWaveStudio=Object.freeze({version:'2.3.0',snapshot:()=>C.serialize(p),get state(){return {step:ui.step,playing:audio.playing,pending:audio.pending,scope:audio.scope,revision,selected:[...ui.selected]};}});
+  window.DotWaveStudio=Object.freeze({version:'2.8.0',snapshot:()=>C.serialize(p),get state(){return {step:ui.step,playing:audio.playing,pending:audio.pending,scope:audio.scope,revision,selected:[...ui.selected]};}});
 })();

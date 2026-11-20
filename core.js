@@ -12,6 +12,7 @@
   const Arrangement=node?require('./arrangement.js'):root.ArrangementTools;
   const Sample=dep('sampler-dsp','SamplerDSP'),Voice=dep('voice-dsp','VoiceDSP');
   const Vocal=dep('vocal-dsp','VocalDSP');
+  const Capture=node?require('./capture-tools.js'):root.CaptureTools;
   const clone = value => JSON.parse(JSON.stringify(value));
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   let sequence = 0;
@@ -209,6 +210,7 @@
     return s;
   }
   function render(p, scope, rate = 44100, options = {}) {
+    if(scope==='capture-preview')return Capture.preview(p.samples,p.rate,rate);
     if (scope === 'preview') return renderSoundPreview(p.wave,{rate});
     if (scope === 'patch-preview') return renderPatchPreview(p.patch,p.target,{rate});
     if(scope==='instrument-preview'){
@@ -282,7 +284,7 @@
     for (let b = 1; b < 8; b++) p.song.clips.push({...clone(first), id: id('beatclip'), start: b * 4});
     return validate(p);
   }
-  const api = {S, D, Song, M, W, IO, FX, Collision, Patch,savePatchTone,loadPatchTone,Shape,Sample,Voice,Vocal,Arrangement,renderSoundPreview, renderPatchPreview, clone, clamp, id, assert, blank, starter, validate, open, serialize, legacy,
+  const api = {S, D, Song, M, W, IO, FX, Collision, Patch,savePatchTone,loadPatchTone,Shape,Sample,Voice,Vocal,Capture,Arrangement,renderSoundPreview, renderPatchPreview, clone, clamp, id, assert, blank, starter, validate, open, serialize, legacy,
     signals, syncTempo, saveSound, setSoundFromWave, patternFromPart, checkedPattern, extend, addPattern, addBeat,
     findClip, clipLength, noteKey, transformNotes, scopeSong, render, encodeStereo, encodeSong};
   if (node) module.exports = api; else root.DotWave = api;

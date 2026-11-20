@@ -2,6 +2,8 @@
 
 These workflows were checked against the bundled `Dot-Wave-Classic.html` and the original Hum → Melody and YouTube guides. Use **More studio tools → Open Classic Studio** or the direct Classic link in SKILL.md. Inspect the current controls before operating an edition that differs. Back up the working session first; use [legacy-files.md](legacy-files.md) when moving files between editions.
 
+Studio 2.8 also offers **Sound → Capture / hum** for reviewed single-voice notes, repeating cycle-to-patch outlines, and keeping the original audio. Classic retains manual waveform snipping, live retuning and synchronized karaoke. These are separate workflows; choose the edition by its actual controls.
+
 ## Choose the tool by its output
 
 | The user wants | Original tool | Keep afterward |
