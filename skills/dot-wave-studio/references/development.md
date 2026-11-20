@@ -8,6 +8,8 @@ Main boundaries:
 - `dsp/`: shared pure audio models. Vocal pronunciation data is loaded in the main page; saved notes already contain phonemes so the audio worker does not need the dictionary.
 - `app.js`, `woof-ui.js`, `vocals-ui.js`, `capture-ui.js`: visible workflow and controllers.
 - `capture-tools.js` and `dsp/hum-*.js`: reviewed single-voice pitch extraction, atomic note insertion and cycle shaping; shared by browser and worker.
+- `studio-ideas.js` and `dsp/doodle-jazz.js`: seeded Doodle Jazz music, random ideas and validation of AI note sketches.
+- `market-wave.js` and `market-ui.js`: explicit 24-hour chart or CSV selection, audio-cycle conversion and Wave A/B handoff. Keeper allows the market origins on the Studio page.
 - `audio.js`: browser audio, pending render cancellation, finite previews and patch keys.
 - `build.cjs`: self-contained HTML and worker, including both JavaScript and CSS dependencies.
 - `storage.js`: browser drafts and personal voice banks, separate from public release assets.

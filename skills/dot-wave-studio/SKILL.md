@@ -1,6 +1,6 @@
 ---
 name: dot-wave-studio
-description: Make and recover editable music in Dot Wave Studio or its original Classic labs, including patches, beats, melodies, vocals and arrangements. Use for Studio sessions, old project files and requested Studio development.
+description: Make and recover editable music in Dot Wave Studio or its original Classic labs, including Doodle Jazz, patches, beats, melodies, vocals and arrangements. Use for Studio sessions, old project files and requested Studio development.
 ---
 
 # Dot Wave Studio
@@ -44,6 +44,18 @@ node <skill>/scripts/classic.cjs preview-patch <patch-or-switchboard.json> --rep
 ```
 
 Recovery merges matching sounds, retains effects and full patch recipes, and renames conflicting IDs. It extracts the sound libraries only; it does not replace the source songs or recover a raw mic take from a repeating waveform. Previewing produces a finite three-second WAV of the actual patch pair.
+
+## Start with Doodle Jazz
+
+Use **Melody → Doodle Jazz** in Studio 2.9 or newer. Choose a style and length, then add the lead or add all four parts. Keep and arrange the parts you want as independent clips. To generate a repeatable band directly into an editable project, use the same composer through the included helper:
+
+```text
+node <skill>/scripts/jazz.cjs --repo <2.9-or-newer-checkout> --out <new.studio.json> --genre cool --bars 8 --bpm 94 --root 3 --seed 57196
+```
+
+The command creates lead, chords, bass and rhythm in Melody, with four reusable patterns and their placements at the start of Arrange. It needs no microphone. Keep the reported genre, tempo, root, bar count and seed to repeat a take. Choose a fresh output path, inspect the result with `studio.cjs`, and render or open it to edit. See [music-projects.md](references/music-projects.md) for the API and adding to an existing song.
+
+**Random melody** fits the current key and grid. **Random beat** fills the active drum measure. **AI sketch** prepares a prompt to share manually and reviews pasted note JSON. In **Sound → Coin wave**, load a 24-hour coin chart or a price CSV, preview the loop, then add it to wave A or B and keep the resulting patch tone if desired.
 
 ## Capture and hum
 

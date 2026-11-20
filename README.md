@@ -6,7 +6,7 @@ A small, playful music studio: **Capture → Patch → Beat → Melody / Vocals 
 
 **[Open Dot Wave Studio 2 online](https://moswald14.github.io/dot-wave-studio/)** — the complete studio on GitHub Pages. Projects and voice takes stay in your browser or downloaded project files. Use **Open** to bring a saved project from the local edition; browser drafts are separate for each website.
 
-Download [Dot Wave Studio 2.8.0](releases/Dot-Wave-Studio-2.8.0.html), then open that HTML file in a browser. The guided studio, recorded instrument bank and built-in singing voices work offline.
+Download [Dot Wave Studio 2.9.0](releases/Dot-Wave-Studio-2.9.0.html), then open that HTML file in a browser. The guided studio, recorded instrument bank and built-in singing voices work offline.
 
 For development, install Node.js 24 or newer. No dependency installation is needed:
 
@@ -22,6 +22,14 @@ Open the local URL printed by the server. The build writes self-contained HTML f
 
 Record or open a WAV, review its pitch and wave, then choose editable melody notes, an outline for wave A/B, or the original performance as an audio clip. Tuning, timing and insertion controls keep each handoff deliberate. The making path follows the music actually in your session. See the [capture guide](Capture-guide.md).
 
+## Generate a starting point
+
+**Melody → Doodle Jazz** runs the original Doodle Jazz composer in Studio. Choose a style and phrase length, then add the lead or the four-part band. The result is editable lead, chord, bass and rhythm notes. Use the usual tools to keep patterns and put them in Arrange. **Random melody** creates a short idea in the current key and grid. **Beat → Random beat** fills the active measure of the drum kit. Both work offline and support Undo.
+
+**Sound → Coin wave** turns the last 24 hours of prices into a loop you can edit. Load BTC-USD or another Coinbase pair, search by coin name or ticker on CoinGecko, or import a timestamp-and-price CSV. Compare the price trace with the looping outline, listen for three seconds, then put the outline on Wave A or B. The price sources are [Coinbase Exchange](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles) and [CoinGecko](https://docs.coingecko.com/reference/coins-id-market-chart).
+
+**Melody → AI sketch** prepares a prompt you can paste into ChatGPT. Review its JSON reply in Studio, then add it as editable notes. You choose what to copy and what to add.
+
 ## WOOFpad and patch tones
 
 WOOFpad is back directly in **Sound**. Wander through two-wave collisions, catch a tone, seed one from the phone keypad, like/recall discoveries and play the full patch on a one-to-three-octave keyboard. Kept patch tones retain their editable recipes and transpose both voices together in melodies and arrangements. Capture a keyboard patch while continuing to explore. Original WOOF switchboards and Classic patch files open here. See the [WOOFpad guide](WOOFpad-guide.md).
@@ -32,7 +40,7 @@ Choose **Sound → Vocals** for Soft singer, Clear singer, Dream choir or your r
 
 ## Codex skill
 
-The reusable [Dot Wave Studio skill](skills/dot-wave-studio/SKILL.md) covers session recovery, WOOFpad patches, singing, composing, editable project files, rendering and requested development. Its helper uses the actual Studio engine to inspect, validate or render a project without uploading it. Copy the `skills/dot-wave-studio` folder into your Codex skills directory to make `$dot-wave-studio` available in a new chat.
+The reusable [Dot Wave Studio skill](skills/dot-wave-studio/SKILL.md) covers session recovery, WOOFpad patches, singing, composing, editable project files, rendering and requested development. Its helpers create repeatable Doodle Jazz projects and use the actual Studio engine to inspect, validate or render music locally. Copy the `skills/dot-wave-studio` folder into your Codex skills directory to make `$dot-wave-studio` available in a new chat.
 
 ## Wave Shaper
 
@@ -56,7 +64,7 @@ See [Wave Shaper controls](Wave-Shaper-guide.md) and the [studio guide](START-HE
 
 ## Verification and source
 
-The original [91 core checks](reports/verification-2.8.0.json) run alongside six capture checks and five microphone/analysis lifecycle checks. It covers audio/file formats, existing-project migration, voice-controller cancellation, waveform editing, pins, section rendering, solo/export separation, live audio replacement, held-key Undo grouping, keyboard focus, vocal pronunciation, pitched rendering, saved lyrics, independent vocal clips and timed MIDI lyrics. Browser checks are recorded separately; passing automated checks does not verify physical microphone, speaker or touch-device quality.
+The [91 core checks](reports/verification-2.8.0.json) run alongside six capture checks, five microphone and analysis lifecycle checks, and seven music generation and coin import checks. It covers audio/file formats, existing-project migration, voice-controller cancellation, waveform editing, pins, section rendering, solo/export separation, live audio replacement, held-key Undo grouping, keyboard focus, vocal pronunciation, pitched rendering, saved lyrics, independent vocal clips and timed MIDI lyrics. Browser checks are recorded separately; passing automated checks does not verify physical microphone, speaker or touch-device quality.
 
 [Studio checks](https://github.com/moswald14/dot-wave-studio/actions/workflows/studio-checks.yml) runs the suite on each push to `main` and pull request. It also rebuilds the downloadable HTML in a temporary folder and checks that it matches the file in `releases/` byte for byte, with Classic and sample credits preserved. Run `node check-release.cjs` locally for the same build check. Three Pages package checks verify the online entry, its credits and the publication file list. Tests have read-only repository access. Successful pushes to `main` deploy the checked website through a separate job with Pages-only publishing permissions.
 

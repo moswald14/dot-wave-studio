@@ -7,7 +7,7 @@ const types = {'.html':'text/html; charset=utf-8','.json':'application/json; cha
 const server = http.createServer((req,res) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') {res.writeHead(405);res.end();return;}
   let url; try {url = decodeURIComponent(new URL(req.url, 'http://127.0.0.1').pathname);} catch {res.writeHead(400);res.end();return;}
-  const relative = url === '/' ? 'Dot-Wave-Studio-2.0.0.html' : url.slice(1);
+  const relative = url === '/' ? 'Dot-Wave-Studio-'+require('./package.json').version+'.html' : url.slice(1);
   const target = path.resolve(root, relative);
   if (!target.startsWith(root + path.sep) || !types[path.extname(target)] || !fs.existsSync(target) || !fs.statSync(target).isFile()) {res.writeHead(404);res.end('File not found.');return;}
   res.writeHead(200, {'Content-Type':types[path.extname(target)],'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});

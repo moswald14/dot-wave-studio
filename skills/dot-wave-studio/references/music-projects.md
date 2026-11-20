@@ -26,6 +26,22 @@ Times and durations are quarter-note beats. MIDI 60 is C4; velocity is 0–1. Th
 
 `C.blank()` returns a version-2 project. `C.open(JSON.parse(text))` validates current files and migrates Classic version-1 files. `C.serialize(p)` validates and encodes personal audio into the portable project. Keep private project outputs outside the public repository. `C.validate(p)` returns a validated independent value; it is not an in-place fixer.
 
+## Doodle Jazz
+
+From Studio 2.9 onward, the browser and the skill share the original composer through `studio-ideas.js`:
+
+```js
+const Ideas = require('/absolute/checkout/studio-ideas.js');
+const { makeProject } = require('/absolute/checkout/skills/dot-wave-studio/scripts/jazz.cjs');
+const { project, band } = makeProject(C, Ideas, {
+  genre: 'cool', bars: 8, bpm: 94, root: 3, seed: 57196, name: 'Blue Hour'
+});
+```
+
+`Ideas.genres` lists the available IDs. Set `bars` to 4, 8 or 16 and `root` to a pitch class 0–11 or `'auto'`. Supply a BPM from 40–240 or omit it for the genre tempo. Set a positive 32-bit seed to reproduce the notes. `band.notes` contains arrays for `melody`, `chords`, `bass` and `rhythm`. Each event has `start`, `duration`, `midi` and `velocity`. `band.measures` lists the chord names by measure.
+
+To add to an existing song, call `Ideas.jazz(options)`, pick the desired lanes from its `notes`, then call `Ideas.addNotes(C, project, band.bars, parts, cursorBeat, true)`. It returns a validated `melody`, the new `inserted` notes per part, and their starting beat. Assign the new melody, then keep and place only the new notes if desired. For a new backing track, `makeProject` sets the tempo and gives the four parts independent song placements. Save and render through the normal project entry points.
+
 ## Sounds and voices
 
 - `C.Sample.catalog()` lists included recorded instrument IDs.

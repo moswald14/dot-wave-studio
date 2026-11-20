@@ -1,4 +1,4 @@
-# Studio 2.8 · your making path
+# Studio 2.9 · your making path
 
 **Capture → Patch → Beat → Melody / Vocals → Arrange → Export.** Start anywhere and come back when an idea needs another tool. The path above each workspace shows what is actually in your session.
 
@@ -7,7 +7,11 @@ In **Sound → Capture / hum**, record or open a WAV up to 30 seconds. Review it
 WOOFpad remains beside Patch tones: wander, catch, play, keep the full two-voice recipe. Each saved sound has a three-second preview. Build a beat, draw or hum a melody, choose a singing voice and give notes words, then place independent patterns in Arrange. Save the editable project along with your WAV or MIDI.
 
 
-**Open `Dot-Wave-Studio-2.7.0.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
+**Melody → Doodle Jazz** gives you the lead or a four-part band in editable notes. **Random melody** uses the current key and grid. **Beat → Random beat** fills the current measure. Try **AI sketch** to copy a music prompt, then paste and review the JSON reply before adding it to Melody.
+
+**Sound → Coin wave** loads a 24-hour BTC or other coin chart. Choose a Coinbase pair, search CoinGecko, or open a price CSV with timestamp and price columns. Preview the loop for three seconds and use it on Wave A or B in the shaper.
+
+**Open `Dot-Wave-Studio-2.9.0.html` in your browser.** No installation or account is needed. Keep the files together after extracting the ZIP.
 
 The new studio follows **Sound → Beat → Melody → Arrange → Export**. All five steps share your project, tempo, playback controls, Undo, and Redo. Switching steps keeps sequenced playback going. Start silently, then press Play when you want to hear it.
 
@@ -53,7 +57,7 @@ Room ambience, recorded instruments and the new voice bank need the new Studio p
 
 Microphone recording depends on browser support and permission. Use the local preview or HTTPS if your browser blocks recording from a file. Imported and recorded audio can total one minute; individual recordings stop after 30 seconds. Songs can render up to five minutes at a time. MIDI preserves notes and timing; custom sound and effect settings travel in the project, not MIDI.
 
-This is a separate local edition. Publishing and Home Assistant installation have not been changed. The original edition remains available for ongoing music work.
+This download runs locally. You can also open the [online Studio](https://moswald14.github.io/dot-wave-studio/).
 
 The `Source` folder contains the complete modular source, existing audio modules, build tools, and reproducible checks. No external libraries or fonts are needed for the new studio.
 

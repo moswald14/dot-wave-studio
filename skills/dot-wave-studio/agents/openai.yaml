@@ -1,4 +1,4 @@
 interface:
   display_name: "Dot Wave Studio"
-  short_description: "Create with Studio 2 and the original Classic labs"
-  default_prompt: "Use $dot-wave-studio to make editable music with my existing sounds and the useful tools from Studio 2 and Classic."
+  short_description: "Make editable music with Studio and Doodle Jazz"
+  default_prompt: "Use $dot-wave-studio to make editable music with my sounds, Doodle Jazz, and the Classic tools."
