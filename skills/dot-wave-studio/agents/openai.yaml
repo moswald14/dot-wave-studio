@@ -1,4 +1,4 @@
 interface:
   display_name: "Dot Wave Studio"
-  short_description: "Make editable songs, patch tones and singing vocals"
-  default_prompt: "Use $dot-wave-studio to make music in my Studio, preserving my saved sounds and keeping the song editable."
+  short_description: "Create with Studio 2 and the original Classic labs"
+  default_prompt: "Use $dot-wave-studio to make editable music with my existing sounds and the useful tools from Studio 2 and Classic."

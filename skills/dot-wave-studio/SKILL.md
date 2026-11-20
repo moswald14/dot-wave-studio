@@ -1,6 +1,6 @@
 ---
 name: dot-wave-studio
-description: Create and edit music, WOOFpad patches, singing vocals, and editable song arrangements in Dot Wave Studio. Use for Studio sessions, sound design, composing, project recovery, and requested Studio development.
+description: Make and recover editable music in Dot Wave Studio or its original Classic labs, including patches, beats, melodies, vocals and arrangements. Use for Studio sessions, old project files and requested Studio development.
 ---
 
 # Dot Wave Studio
@@ -8,6 +8,7 @@ description: Create and edit music, WOOFpad patches, singing vocals, and editabl
 Help the user make music in their existing studio. Deliver editable music as well as a listenable result when composing.
 
 - Online studio: https://moswald14.github.io/dot-wave-studio/
+- Original Classic labs: https://moswald14.github.io/dot-wave-studio/Dot-Wave-Classic.html
 - Source: https://github.com/moswald14/dot-wave-studio
 - Core flow: **Sound → Beat → Melody → Arrange → Export**. The user can enter at any step.
 
@@ -19,6 +20,10 @@ Use the connected browser's supported UI tools for visible work. Use the local J
 
 Read [music-projects.md](references/music-projects.md) when composing through the core API or editing Studio files. Read [development.md](references/development.md) for requested program changes or publication.
 
+Use Studio 2 for the guided workflow, saved patch recipes and singing. Use the actual Classic page for its specialized tools: Hum → Melody, karaoke, waveform snipping, Mushroom Garden, name tones and wave pictures, beat loop programs, richer harmony tools, browser speech, room tuning, controller assignments and ROM/SoundFont sampling. Read [classic-labs.md](references/classic-labs.md) for the relevant workflow and what it produces. These are available through Classic; do not imply they were all added to Studio 2.
+
+Read [legacy-files.md](references/legacy-files.md) for old saves, sound recovery, switchboards or moving work between editions. Preserve the full original before converting. New singing, recorded instruments and complete patch tones cannot be exported to Classic as editable projects; keep both editions' source files and use a suitable audio or note handoff.
+
 The included `scripts/studio.cjs` validates, inspects and renders saved projects with the real Studio engine. It uses Node.js 24+, no installed dependencies, and an existing source checkout:
 
 ```text
@@ -29,6 +34,16 @@ node <skill>/scripts/studio.cjs render <song.studio.json> --repo <checkout> --sc
 ```
 
 The helper also discovers a checkout in the current directory, its `work/github-dot-wave-studio` child, or `DOT_WAVE_STUDIO_REPO`. It refuses to overwrite an existing output.
+
+`scripts/classic.cjs` adds useful bridges from the first Studio. It uses the same checkout discovery and writes only an explicitly named, new output:
+
+```text
+node <skill>/scripts/classic.cjs migrate <old.studio.json> --repo <checkout> --out <new.studio.json>
+node <skill>/scripts/classic.cjs recover-sounds <library-or-old-save.json> [more-saves.json] --repo <checkout> --out <recovered.library.json>
+node <skill>/scripts/classic.cjs preview-patch <patch-or-switchboard.json> --repo <checkout> --out <patch.wav>
+```
+
+Recovery merges matching sounds, retains effects and full patch recipes, and renames conflicting IDs. It extracts the sound libraries only; it does not replace the source songs or recover a raw mic take from a repeating waveform. Previewing produces a finite three-second WAV of the actual patch pair.
 
 ## Sound and patch tones
 
